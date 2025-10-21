@@ -571,7 +571,11 @@ class _CreateGroupScreenState extends State<CreateGroupScreen> {
                   .map((rule) => rule.trim())
                   .where((rule) => rule.isNotEmpty)
                   .toList(),
-              lastUpdated: DateTime.now(),
+              allowAnonymousPosts: true,
+              requireModeratorApproval: false,
+              allowImages: false,
+              allowLinks: false,
+              maxPostLength: 500,
             )
           : null;
 
@@ -583,11 +587,20 @@ class _CreateGroupScreenState extends State<CreateGroupScreen> {
         privacy: _selectedPrivacy,
         membersCount: 1,
         postsCount: 0,
-        createdAt: DateTime.now(),
-        adminId: 'current_user_id', // Replace with actual user ID
         isJoined: true,
+        isModerator: true,
+        createdAt: DateTime.now(),
+        lastActivity: DateTime.now(),
         tags: tags,
-        rules: rules,
+        moderators: ['current_user_id'], // Replace with actual user ID
+        rules: rules ?? GroupRules(
+              rules: [],
+              allowAnonymousPosts: true,
+              requireModeratorApproval: false,
+              allowImages: false,
+              allowLinks: false,
+              maxPostLength: 500,
+            ),
       );
 
       await Provider.of<CommunityProvider>(context, listen: false)
@@ -644,6 +657,8 @@ class _CreateGroupScreenState extends State<CreateGroupScreen> {
         return Icons.healing;
       case GroupType.stress:
         return Icons.warning;
+      case GroupType.selfCare:
+        return Icons.spa;
       case GroupType.general:
         return Icons.forum;
     }
@@ -673,6 +688,8 @@ class _CreateGroupScreenState extends State<CreateGroupScreen> {
         return Colors.purple;
       case GroupType.stress:
         return Colors.deepOrange;
+      case GroupType.selfCare:
+        return Colors.teal;
       case GroupType.general:
         return AppTheme.textSecondary;
     }
@@ -702,6 +719,8 @@ class _CreateGroupScreenState extends State<CreateGroupScreen> {
         return 'الصدمات';
       case GroupType.stress:
         return 'التوتر';
+      case GroupType.selfCare:
+        return 'العناية بالذات';
       case GroupType.general:
         return 'عام';
     }

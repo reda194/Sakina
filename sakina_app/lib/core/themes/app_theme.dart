@@ -19,6 +19,7 @@ class AppTheme {
   static const Color surfaceColor = Color(0xFFFFFFFF);
   static const Color cardColor = Color(0xFFFFFFFF);
   static const Color dividerColor = Color(0xFFE5E9F2);
+  static const Color borderColor = Color(0xFFE5E9F2);
 
   // Text Colors - Accessible and Clear
   static const Color textPrimary = Color(0xFF1A1D29);
@@ -26,6 +27,13 @@ class AppTheme {
   static const Color textLight = Color(0xFF9CA3AF);
   static const Color textDark = Color(0xFF0F172A);
   static const Color textOnPrimary = Color(0xFFFFFFFF);
+
+  // Typography Styles
+  static TextStyle bodyMedium = GoogleFonts.tajawal(
+    fontSize: 14,
+    fontWeight: FontWeight.normal,
+    color: textPrimary,
+  );
 
   // Status Colors - Clear Communication
   static const Color successColor = Color(0xFF10B981);

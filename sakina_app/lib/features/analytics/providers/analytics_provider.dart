@@ -101,9 +101,9 @@ class AnalyticsProvider with ChangeNotifier {
 
   void _calculateBasicStats(List<MoodEntry> entries) {
     _trackingDays = entries.length;
-    
+
     if (entries.isNotEmpty) {
-      _averageMood = entries.map((e) => e.mood).reduce((a, b) => a + b) / entries.length;
+      _averageMood = entries.map((e) => e.mood.numericValue.toDouble()).reduce((a, b) => a + b) / entries.length;
       
       final energyEntries = entries.where((e) => e.energyLevel != null);
       if (energyEntries.isNotEmpty) {
@@ -127,7 +127,7 @@ class AnalyticsProvider with ChangeNotifier {
     };
 
     for (final entry in entries) {
-      final moodText = _getMoodText(entry.mood);
+      final moodText = _getMoodText(entry.mood.toInt());
       _moodDistribution[moodText] = (_moodDistribution[moodText] ?? 0) + 1;
     }
 

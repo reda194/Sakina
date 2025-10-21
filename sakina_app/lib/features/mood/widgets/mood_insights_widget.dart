@@ -1,5 +1,5 @@
 import 'package:flutter/material.dart';
-import '../models/mood_entry.dart';
+import '../../../models/mood_entry.dart';
 import '../../../core/themes/app_theme.dart';
 
 class MoodInsightsWidget extends StatefulWidget {
@@ -99,14 +99,14 @@ class _MoodInsightsWidgetState extends State<MoodInsightsWidget>
 
   void _analyzeMoodTrend() {
     if (widget.moodEntries.length < 3) return;
-    
+
     final recent = widget.moodEntries.take(7).toList();
     final older = widget.moodEntries.skip(7).take(7).toList();
-    
+
     if (older.isEmpty) return;
-    
-    final recentAvg = recent.map((e) => e.mood).reduce((a, b) => a + b) / recent.length;
-    final olderAvg = older.map((e) => e.mood).reduce((a, b) => a + b) / older.length;
+
+    final recentAvg = recent.map((e) => e.mood.numericValue.toDouble()).reduce((a, b) => a + b) / recent.length;
+    final olderAvg = older.map((e) => e.mood.numericValue.toDouble()).reduce((a, b) => a + b) / older.length;
     
     final difference = recentAvg - olderAvg;
     
@@ -145,9 +145,11 @@ class _MoodInsightsWidgetState extends State<MoodInsightsWidget>
     final factorMoodSum = <String, double>{};
     
     for (var entry in widget.moodEntries) {
-      for (var factor in entry.factors) {
-        factorCounts[factor] = (factorCounts[factor] ?? 0) + 1;
-        factorMoodSum[factor] = (factorMoodSum[factor] ?? 0) + entry.mood;
+      if (entry.triggers != null) {
+        for (var factor in entry.triggers!) {
+          factorCounts[factor] = (factorCounts[factor] ?? 0) + 1;
+          factorMoodSum[factor] = (factorMoodSum[factor] ?? 0) + entry.mood.numericValue;
+        }
       }
     }
     
@@ -207,12 +209,12 @@ class _MoodInsightsWidgetState extends State<MoodInsightsWidget>
   void _analyzeSleepCorrelation() {
     if (widget.moodEntries.length < 5) return;
     
-    final goodSleepEntries = widget.moodEntries.where((e) => e.sleep >= 4).toList();
-    final poorSleepEntries = widget.moodEntries.where((e) => e.sleep <= 2).toList();
+    final goodSleepEntries = widget.moodEntries.where((e) => (e.sleepQuality ?? 3) >= 4).toList();
+    final poorSleepEntries = widget.moodEntries.where((e) => (e.sleepQuality ?? 3) <= 2).toList();
     
     if (goodSleepEntries.length >= 3 && poorSleepEntries.length >= 3) {
-      final goodSleepMood = goodSleepEntries.map((e) => e.mood).reduce((a, b) => a + b) / goodSleepEntries.length;
-      final poorSleepMood = poorSleepEntries.map((e) => e.mood).reduce((a, b) => a + b) / poorSleepEntries.length;
+      final goodSleepMood = goodSleepEntries.map((e) => e.mood.numericValue.toDouble()).reduce((a, b) => a + b) / goodSleepEntries.length;
+      final poorSleepMood = poorSleepEntries.map((e) => e.mood.numericValue.toDouble()).reduce((a, b) => a + b) / poorSleepEntries.length;
       
       final difference = goodSleepMood - poorSleepMood;
       
@@ -232,12 +234,12 @@ class _MoodInsightsWidgetState extends State<MoodInsightsWidget>
   void _analyzeEnergyCorrelation() {
     if (widget.moodEntries.length < 5) return;
     
-    final highEnergyEntries = widget.moodEntries.where((e) => e.energy >= 4).toList();
-    final lowEnergyEntries = widget.moodEntries.where((e) => e.energy <= 2).toList();
+    final highEnergyEntries = widget.moodEntries.where((e) => (e.energyLevel ?? 3) >= 4).toList();
+    final lowEnergyEntries = widget.moodEntries.where((e) => (e.energyLevel ?? 3) <= 2).toList();
     
     if (highEnergyEntries.length >= 3 && lowEnergyEntries.length >= 3) {
-      final highEnergyMood = highEnergyEntries.map((e) => e.mood).reduce((a, b) => a + b) / highEnergyEntries.length;
-      final lowEnergyMood = lowEnergyEntries.map((e) => e.mood).reduce((a, b) => a + b) / lowEnergyEntries.length;
+      final highEnergyMood = highEnergyEntries.map((e) => e.mood.numericValue.toDouble()).reduce((a, b) => a + b) / highEnergyEntries.length;
+      final lowEnergyMood = lowEnergyEntries.map((e) => e.mood.numericValue.toDouble()).reduce((a, b) => a + b) / lowEnergyEntries.length;
       
       final difference = highEnergyMood - lowEnergyMood;
       
@@ -257,8 +259,8 @@ class _MoodInsightsWidgetState extends State<MoodInsightsWidget>
   void _analyzeStress() {
     if (widget.moodEntries.length < 5) return;
     
-    final highStressEntries = widget.moodEntries.where((e) => e.stress >= 4).toList();
-    final lowStressEntries = widget.moodEntries.where((e) => e.stress <= 2).toList();
+    final highStressEntries = widget.moodEntries.where((e) => (e.anxietyLevel ?? 3) >= 4).toList();
+    final lowStressEntries = widget.moodEntries.where((e) => (e.anxietyLevel ?? 3) <= 2).toList();
     
     if (highStressEntries.length >= 3) {
       final stressPercentage = (highStressEntries.length / widget.moodEntries.length * 100).round();
@@ -298,7 +300,7 @@ class _MoodInsightsWidgetState extends State<MoodInsightsWidget>
     
     for (var entry in widget.moodEntries) {
       final weekday = entry.timestamp.weekday;
-      weekdayMoods[weekday] = (weekdayMoods[weekday] ?? [])..add(entry.mood.toDouble());
+      weekdayMoods[weekday] = (weekdayMoods[weekday] ?? [])..add(entry.mood.numericValue.toDouble());
     }
     
     int? bestDay;
@@ -368,12 +370,12 @@ class _MoodInsightsWidgetState extends State<MoodInsightsWidget>
 
   void _generateRecommendations() {
     final recentEntries = widget.moodEntries.take(7).toList();
-    
+
     if (recentEntries.isEmpty) return;
-    
-    final averageMood = recentEntries.map((e) => e.mood).reduce((a, b) => a + b) / recentEntries.length;
-    final averageStress = recentEntries.map((e) => e.stress).reduce((a, b) => a + b) / recentEntries.length;
-    final averageSleep = recentEntries.map((e) => e.sleep).reduce((a, b) => a + b) / recentEntries.length;
+
+    final averageMood = recentEntries.map((e) => e.mood.numericValue.toDouble()).reduce((a, b) => a + b) / recentEntries.length;
+    final averageStress = recentEntries.map((e) => (e.anxietyLevel ?? 3)).reduce((a, b) => a + b) / recentEntries.length;
+    final averageSleep = recentEntries.map((e) => (e.sleepQuality ?? 3)).reduce((a, b) => a + b) / recentEntries.length;
     
     if (averageMood < 3) {
       _insights.add(const MoodInsight(

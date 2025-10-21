@@ -141,13 +141,23 @@ class AppController extends ChangeNotifier {
     _isAuthenticated = false;
     _userEmail = null;
     _userName = null;
-    
+
     final prefs = await SharedPreferences.getInstance();
     await prefs.setBool('isAuthenticated', false);
     await prefs.remove('userEmail');
     await prefs.remove('userName');
-    
+
     notifyListeners();
+  }
+
+  // Update user name
+  Future<void> updateUserName(String name) async {
+    if (_userName != name) {
+      _userName = name;
+      final prefs = await SharedPreferences.getInstance();
+      await prefs.setString('userName', name);
+      notifyListeners();
+    }
   }
 
   // Notification management
@@ -156,6 +166,15 @@ class AppController extends ChangeNotifier {
     final prefs = await SharedPreferences.getInstance();
     await prefs.setBool('notificationsEnabled', _notificationsEnabled);
     notifyListeners();
+  }
+
+  Future<void> updateNotificationSettings(bool enabled) async {
+    if (_notificationsEnabled != enabled) {
+      _notificationsEnabled = enabled;
+      final prefs = await SharedPreferences.getInstance();
+      await prefs.setBool('notificationsEnabled', enabled);
+      notifyListeners();
+    }
   }
 
   // Premium management

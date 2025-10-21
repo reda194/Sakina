@@ -244,7 +244,7 @@ class _EnhancedToolsScreenState extends State<EnhancedToolsScreen>
     return Column(
       crossAxisAlignment: CrossAxisAlignment.start,
       children: [
-        ResponsiveText(
+        const ResponsiveText(
           'الفئات',
           baseFontSize: 20.0,
           fontWeight: FontWeight.bold,
@@ -299,7 +299,7 @@ class _EnhancedToolsScreenState extends State<EnhancedToolsScreen>
     return Column(
       crossAxisAlignment: CrossAxisAlignment.start,
       children: [
-        ResponsiveText(
+        const ResponsiveText(
           'الأدوات المميزة',
           baseFontSize: 20.0,
           fontWeight: FontWeight.bold,
@@ -424,7 +424,7 @@ class _EnhancedToolsScreenState extends State<EnhancedToolsScreen>
     return Column(
       crossAxisAlignment: CrossAxisAlignment.start,
       children: [
-        ResponsiveText(
+        const ResponsiveText(
           'جميع الأدوات',
           baseFontSize: 20.0,
           fontWeight: FontWeight.bold,
@@ -575,14 +575,14 @@ class _EnhancedToolsScreenState extends State<EnhancedToolsScreen>
         ),
         isPremium: false,
       ),
-      ToolItem(
+      const ToolItem(
         title: 'نوم هادئ',
         description: 'أصوات طبيعية مهدئة لنوم عميق ومريح',
         icon: Icons.bedtime,
         category: 'النوم',
         duration: '30 دقيقة',
         gradient: LinearGradient(
-          colors: [AppTheme.moodCalm, const Color(0xFF673AB7)],
+          colors: [AppTheme.moodCalm, Color(0xFF673AB7)],
         ),
         isPremium: true,
       ),
@@ -603,14 +603,14 @@ class _EnhancedToolsScreenState extends State<EnhancedToolsScreen>
         ),
         isPremium: false,
       ),
-      ToolItem(
+      const ToolItem(
         title: 'استرخاء العضلات',
         description: 'تمارين لاسترخاء العضلات وتخفيف التوتر',
         icon: Icons.self_improvement,
         category: 'الاسترخاء',
         duration: '15 دقيقة',
         gradient: LinearGradient(
-          colors: [AppTheme.moodHappy, const Color(0xFFE91E63)],
+          colors: [AppTheme.moodHappy, Color(0xFFE91E63)],
         ),
         isPremium: false,
       ),

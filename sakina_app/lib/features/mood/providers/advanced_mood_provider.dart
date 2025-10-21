@@ -1,14 +1,12 @@
 import 'package:flutter/foundation.dart';
 import 'package:shared_preferences/shared_preferences.dart';
 import 'dart:convert';
-import '../models/mood_entry.dart';
-import '../../../core/services/notification_service.dart';
+import '../../../models/mood_entry.dart';
 import '../../../core/services/ai_service.dart';
 
 class AdvancedMoodProvider with ChangeNotifier {
   final List<MoodEntry> _moodEntries = [];
-  final NotificationService _notificationService = NotificationService();
-  final AiService _aiService = AiService();
+  final AiService _aiService = AiService.instance;
   
   bool _isLoading = false;
   String? _error;
@@ -303,7 +301,7 @@ class AdvancedMoodProvider with ChangeNotifier {
     
     // Calculate average mood
     _averageMood = _moodEntries
-        .map((entry) => entry.mood)
+        .map((entry) => entry.mood.numericValue.toDouble())
         .reduce((a, b) => a + b) / _moodEntries.length;
     
     // Calculate factor correlations
@@ -324,9 +322,11 @@ class AdvancedMoodProvider with ChangeNotifier {
     final factorCounts = <String, int>{};
     
     for (final entry in _moodEntries) {
-      for (final factor in entry.factors) {
-        factorMoodSums[factor] = (factorMoodSums[factor] ?? 0) + entry.mood;
-        factorCounts[factor] = (factorCounts[factor] ?? 0) + 1;
+      if (entry.triggers != null) {
+        for (final factor in entry.triggers!) {
+          factorMoodSums[factor] = (factorMoodSums[factor] ?? 0) + entry.mood.numericValue.toDouble();
+          factorCounts[factor] = (factorCounts[factor] ?? 0) + 1;
+        }
       }
     }
     
@@ -346,7 +346,7 @@ class AdvancedMoodProvider with ChangeNotifier {
     
     for (final entry in _moodEntries) {
       final weekday = entry.timestamp.weekday;
-      weeklyMoods[weekday] = (weeklyMoods[weekday] ?? [])..add(entry.mood.toDouble());
+      weeklyMoods[weekday] = (weeklyMoods[weekday] ?? [])..add(entry.mood.numericValue.toDouble());
     }
     
     weeklyMoods.forEach((weekday, moods) {
@@ -377,15 +377,19 @@ class AdvancedMoodProvider with ChangeNotifier {
     try {
       final recentEntries = _moodEntries.take(7).toList();
       final context = {
-        'current_mood': entry.mood,
-        'recent_average': recentEntries.map((e) => e.mood).reduce((a, b) => a + b) / recentEntries.length,
-        'factors': entry.factors,
-        'sleep': entry.sleep,
-        'energy': entry.energy,
-        'stress': entry.stress,
+        'current_mood': entry.mood.name,
+        'current_mood_numeric': entry.mood.numericValue,
+        'sleep_quality': entry.sleepQuality,
+        'energy_level': entry.energyLevel,
+        'anxiety_level': entry.anxietyLevel,
+        'recent_average': recentEntries.isNotEmpty
+            ? recentEntries.map((e) => e.mood.numericValue.toDouble()).reduce((a, b) => a + b) / recentEntries.length
+            : 0.0,
+        'triggers': entry.triggers,
+        'note': entry.note,
         'tracking_streak': _trackingStreak,
       };
-      
+
       // This would typically call an AI service
       // For now, we'll just log the context
       debugPrint('AI Insight Context: $context');
@@ -402,7 +406,7 @@ class AdvancedMoodProvider with ChangeNotifier {
     if (enabled) {
       _scheduleNotifications();
     } else {
-      await _notificationService.cancelAllNotifications();
+      // await _notificationService.cancelAllNotifications();
     }
     
     notifyListeners();
@@ -436,13 +440,13 @@ class AdvancedMoodProvider with ChangeNotifier {
     if (!_dailyReminders) return;
     
     try {
-      await _notificationService.scheduleDailyNotification(
-        id: 1,
-        title: 'تذكير تسجيل المزاج',
-        body: 'كيف كان مزاجك اليوم؟ سجل مشاعرك الآن',
-        hour: _reminderTime.hour,
-        minute: _reminderTime.minute,
-      );
+      // await _notificationService.scheduleDailyNotification(
+      //   id: 1,
+      //   title: 'تذكير تسجيل المزاج',
+      //   body: 'كيف كان مزاجك اليوم؟ سجل مشاعرك الآن',
+      //   hour: _reminderTime.hour,
+      //   minute: _reminderTime.minute,
+      // );
     } catch (e) {
       debugPrint('Error scheduling notifications: $e');
     }
@@ -572,14 +576,14 @@ class AdvancedMoodProvider with ChangeNotifier {
       };
     }
     
-    final moods = _moodEntries.map((e) => e.mood).toList();
-    final total = moods.length;
-    final average = moods.reduce((a, b) => a + b) / total;
-    final best = moods.reduce((a, b) => a > b ? a : b);
-    final worst = moods.reduce((a, b) => a < b ? a : b);
-    
+    final moodValues = _moodEntries.map((e) => e.mood.toDouble()).toList();
+    final total = moodValues.length;
+    final average = moodValues.reduce((a, b) => a + b) / total;
+    final best = moodValues.reduce((a, b) => a > b ? a : b);
+    final worst = moodValues.reduce((a, b) => a < b ? a : b);
+
     // Calculate variance
-    final variance = moods
+    final variance = moodValues
         .map((mood) => (mood - average) * (mood - average))
         .reduce((a, b) => a + b) / total;
     

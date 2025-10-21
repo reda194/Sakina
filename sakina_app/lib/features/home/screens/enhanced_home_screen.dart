@@ -369,7 +369,7 @@ class _EnhancedHomeScreenState extends State<EnhancedHomeScreen>
               ),
               SizedBox(height: ResponsiveUtils.getResponsiveSpacing(context, 20.0)),
               EnhancedMoodSelector(
-                selectedMood: moodProvider.currentMood,
+                selectedMood: moodProvider.currentMood ?? 3,
                 onMoodSelected: (mood) {
                   moodProvider.updateMood(mood);
                   _showMoodSavedSnackBar();
@@ -397,7 +397,6 @@ class _EnhancedHomeScreenState extends State<EnhancedHomeScreen>
             ),
             SizedBox(height: ResponsiveUtils.getResponsiveSpacing(context, 16.0)),
             ResponsiveGridView(
-              crossAxisCount: context.isMobile ? 2 : 1,
               crossAxisSpacing: ResponsiveUtils.getResponsiveSpacing(context, 12.0),
               mainAxisSpacing: ResponsiveUtils.getResponsiveSpacing(context, 12.0),
               children: [
@@ -497,7 +496,6 @@ class _EnhancedHomeScreenState extends State<EnhancedHomeScreen>
         ),
         SizedBox(height: ResponsiveUtils.getResponsiveSpacing(context, 16.0)),
         ResponsiveGridView(
-          crossAxisCount: context.isMobile ? 2 : (context.isTablet ? 3 : 4),
           crossAxisSpacing: ResponsiveUtils.getResponsiveSpacing(context, 16.0),
           mainAxisSpacing: ResponsiveUtils.getResponsiveSpacing(context, 16.0),
           children: features.map((feature) {

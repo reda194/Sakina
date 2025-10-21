@@ -1,12 +1,12 @@
 import 'package:flutter/material.dart';
 import 'package:provider/provider.dart';
 import '../../../core/themes/app_theme.dart';
-import '../../../models/therapy_model.dart';
+import '../../../models/therapy_program_model.dart';
 import '../providers/therapy_provider.dart';
 import '../../../widgets/loading_button.dart';
 
 class ExerciseDetailsScreen extends StatefulWidget {
-  final ExerciseModel exercise;
+  final TherapyExerciseModel exercise;
   final String programId;
   final String sessionId;
 
@@ -177,13 +177,13 @@ class _ExerciseDetailsScreenState extends State<ExerciseDetailsScreen>
                 child: Column(
                   crossAxisAlignment: CrossAxisAlignment.start,
                   children: [
-                    Row(
+                    const Row(
                       children: [
                         Icon(
                           Icons.lightbulb_outline,
                           color: AppTheme.warningColor,
                         ),
-                        const SizedBox(width: 8),
+                        SizedBox(width: 8),
                         Text(
                           'نصائح مفيدة',
                           style: TextStyle(
@@ -201,7 +201,7 @@ class _ExerciseDetailsScreenState extends State<ExerciseDetailsScreen>
                         child: Row(
                           crossAxisAlignment: CrossAxisAlignment.start,
                           children: [
-                            Icon(
+                            const Icon(
                               Icons.circle,
                               size: 6,
                               color: AppTheme.warningColor,
@@ -297,13 +297,13 @@ class _ExerciseDetailsScreenState extends State<ExerciseDetailsScreen>
                 child: Column(
                   crossAxisAlignment: CrossAxisAlignment.start,
                   children: [
-                    Row(
+                    const Row(
                       children: [
                         Icon(
                           Icons.check_circle,
                           color: AppTheme.successColor,
                         ),
-                        const SizedBox(width: 8),
+                        SizedBox(width: 8),
                         Text(
                           'تم إكمال التمرين',
                           style: TextStyle(
@@ -317,7 +317,7 @@ class _ExerciseDetailsScreenState extends State<ExerciseDetailsScreen>
                     const SizedBox(height: 8),
                     Text(
                       'تاريخ الإكمال: ${_formatDate(widget.exercise.completedAt!)}',
-                      style: TextStyle(
+                      style: const TextStyle(
                         color: AppTheme.textSecondary,
                         fontSize: 14,
                       ),
@@ -414,7 +414,7 @@ class _ExerciseDetailsScreenState extends State<ExerciseDetailsScreen>
                   child: _buildInfoItem(
                     Icons.timer,
                     'المدة',
-                    '${widget.exercise.duration} دقيقة',
+                    '${widget.exercise.durationMinutes} دقيقة',
                   ),
                 ),
                 Expanded(
@@ -726,6 +726,12 @@ class _ExerciseDetailsScreenState extends State<ExerciseDetailsScreen>
         return 'سلوكي';
       case ExerciseType.physical:
         return 'جسدي';
+      case ExerciseType.reading:
+        return 'قراءة';
+      case ExerciseType.writing:
+        return 'كتابة';
+      case ExerciseType.reflection:
+        return 'تأمل';
     }
   }
 

@@ -178,19 +178,12 @@ class _RegisterScreenState extends State<RegisterScreen> {
                   hint: 'أدخل كلمة مرور قوية',
                   obscureText: _obscurePassword,
                   prefixIcon: Icons.lock_outlined,
-                  suffixIcon: IconButton(
-                    icon: Icon(
-                      _obscurePassword
-                          ? Icons.visibility_off
-                          : Icons.visibility,
-                      color: AppTheme.textSecondary,
-                    ),
-                    onPressed: () {
-                      setState(() {
-                        _obscurePassword = !_obscurePassword;
-                      });
-                    },
-                  ),
+                  suffixIcon: _obscurePassword ? Icons.visibility_off : Icons.visibility,
+                  onSuffixIconPressed: () {
+                    setState(() {
+                      _obscurePassword = !_obscurePassword;
+                    });
+                  },
                   validator: (value) {
                     if (value == null || value.isEmpty) {
                       return 'يرجى إدخال كلمة المرور';
@@ -211,19 +204,12 @@ class _RegisterScreenState extends State<RegisterScreen> {
                   hint: 'أعد إدخال كلمة المرور',
                   obscureText: _obscureConfirmPassword,
                   prefixIcon: Icons.lock_outlined,
-                  suffixIcon: IconButton(
-                    icon: Icon(
-                      _obscureConfirmPassword
-                          ? Icons.visibility_off
-                          : Icons.visibility,
-                      color: AppTheme.textSecondary,
-                    ),
-                    onPressed: () {
-                      setState(() {
-                        _obscureConfirmPassword = !_obscureConfirmPassword;
-                      });
-                    },
-                  ),
+                  suffixIcon: _obscureConfirmPassword ? Icons.visibility_off : Icons.visibility,
+                  onSuffixIconPressed: () {
+                    setState(() {
+                      _obscureConfirmPassword = !_obscureConfirmPassword;
+                    });
+                  },
                   validator: (value) {
                     if (value == null || value.isEmpty) {
                       return 'يرجى تأكيد كلمة المرور';

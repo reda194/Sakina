@@ -398,27 +398,14 @@ class SpecialistDetailsScreen extends StatelessWidget {
             ),
           ),
           const SizedBox(height: 8),
-          ...specialist.workingHours.entries.map(
-            (entry) => Padding(
+          ...specialist.workingHours.map(
+            (hours) => Padding(
               padding: const EdgeInsets.only(bottom: 4),
-              child: Row(
-                children: [
-                  SizedBox(
-                    width: 80,
-                    child: Text(
-                      entry.key,
-                      style: Theme.of(context).textTheme.bodyMedium?.copyWith(
-                        fontWeight: FontWeight.w500,
-                      ),
-                    ),
-                  ),
-                  Text(
-                    entry.value,
-                    style: Theme.of(context).textTheme.bodyMedium?.copyWith(
-                      color: AppTheme.textSecondary,
-                    ),
-                  ),
-                ],
+              child: Text(
+                hours,
+                style: Theme.of(context).textTheme.bodyMedium?.copyWith(
+                  color: AppTheme.textSecondary,
+                ),
               ),
             ),
           ),

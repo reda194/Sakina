@@ -7,6 +7,14 @@ class ProfileProvider extends ChangeNotifier {
   
   ProfileProvider._();
 
+  // Load profile data
+  Future<void> loadProfile() async {
+    // Simulate loading profile data
+    await Future.delayed(const Duration(milliseconds: 500));
+    // In a real app, this would load from storage or API
+    notifyListeners();
+  }
+
   // User profile data
   String _userName = 'المستخدم';
   String _userEmail = 'user@example.com';
@@ -124,7 +132,7 @@ class ProfileProvider extends ChangeNotifier {
     }
     if (language != null) {
       _language = language;
-      await AppController.instance.changeLanguage(_language);
+      await AppController.instance.changeLanguage(Locale(_language));
     }
     if (soundEnabled != null) _soundEnabled = soundEnabled;
     if (vibrationEnabled != null) _vibrationEnabled = vibrationEnabled;
@@ -166,7 +174,7 @@ class ProfileProvider extends ChangeNotifier {
   Future<void> incrementSessions() async {
     _totalSessions++;
     _lastActiveDate = DateTime.now();
-    await AppController.instance.incrementSessions();
+    await AppController.instance.incrementCompletedSessions();
     notifyListeners();
   }
   

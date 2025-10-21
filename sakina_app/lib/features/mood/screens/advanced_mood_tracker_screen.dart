@@ -3,8 +3,7 @@ import 'package:provider/provider.dart';
 import 'package:fl_chart/fl_chart.dart';
 import '../../../core/themes/app_theme.dart';
 import '../providers/mood_provider.dart';
-import '../models/mood_entry.dart';
-import '../widgets/mood_selector_widget.dart';
+import '../../../models/mood_entry.dart';
 import '../widgets/mood_insights_widget.dart';
 import '../widgets/mood_calendar_widget.dart';
 
@@ -831,12 +830,13 @@ class _AdvancedMoodTrackerScreenState extends State<AdvancedMoodTrackerScreen>
   void _saveMoodEntry() {
     final entry = MoodEntry(
       id: DateTime.now().millisecondsSinceEpoch.toString(),
-      mood: _selectedMood,
-      energy: _energyLevel,
-      sleep: _sleepQuality,
-      stress: _stressLevel,
-      factors: _selectedFactors,
-      notes: _notes,
+      userId: 'current_user', // TODO: Get from auth provider
+      mood: MoodType.fromNumeric(_selectedMood),
+      energyLevel: _energyLevel,
+      sleepQuality: _sleepQuality,
+      anxietyLevel: _stressLevel,
+      triggers: _selectedFactors,
+      note: _notes,
       timestamp: DateTime.now(),
     );
     

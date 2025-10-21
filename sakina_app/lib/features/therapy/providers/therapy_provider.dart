@@ -166,6 +166,37 @@ class TherapyProvider with ChangeNotifier {
     }
   }
 
+  // Restart a program from the beginning
+  Future<void> restartProgram(String programId) async {
+    _setLoading(true);
+    try {
+      // Simulate API call
+      await Future.delayed(const Duration(milliseconds: 500));
+
+      final programIndex = _myPrograms.indexWhere((p) => p.id == programId);
+      if (programIndex == -1) return;
+
+      // Reset program progress
+      final originalProgram = _programs.firstWhere((p) => p.id == programId);
+      final restartedProgram = originalProgram.copyWith(
+        status: TherapyProgramStatus.inProgress,
+        startedAt: DateTime.now(),
+        currentSessionIndex: 0,
+        progress: 0.0,
+        completedAt: null,
+        updatedAt: DateTime.now(),
+      );
+
+      _myPrograms[programIndex] = restartedProgram;
+      _error = null;
+      notifyListeners();
+    } catch (e) {
+      _error = 'فشل في إعادة بدء البرنامج: $e';
+    } finally {
+      _setLoading(false);
+    }
+  }
+
   // Load initial assessment
   Future<void> loadAssessment() async {
     _setLoading(true);
@@ -182,7 +213,7 @@ class TherapyProvider with ChangeNotifier {
   }
 
   // Submit assessment
-  Future<List<String>> submitAssessment(Map<String, String> answers) async {
+  Future<List<String>> submitAssessment(Map<String, dynamic> answers) async {
     _setLoading(true);
     try {
       // Simulate API call
@@ -424,7 +455,7 @@ class TherapyProvider with ChangeNotifier {
     return program.rating >= 4.0 && !program.isPremium;
   }
 
-  List<String> _generateRecommendations(Map<String, String> answers) {
+  List<String> _generateRecommendations(Map<String, dynamic> answers) {
     final recommendations = <String>[];
     
     // Simple recommendation logic
@@ -679,6 +710,15 @@ class TherapyProvider with ChangeNotifier {
           'مصدر 1',
           'مصدر 2',
         ],
+        objectives: [
+          'الهدف 1 للجلسة ${index + 1}',
+          'الهدف 2 للجلسة ${index + 1}',
+        ],
+        keyPoints: [
+          'نقطة رئيسية 1',
+          'نقطة رئيسية 2',
+          'نقطة رئيسية 3',
+        ],
         createdAt: now.subtract(Duration(days: 30 - index)),
         updatedAt: now,
       );
@@ -694,7 +734,7 @@ class TherapyProvider with ChangeNotifier {
         sessionId: sessionId,
         title: 'تمرين التفكير',
         description: 'تمرين لتحليل الأفكار السلبية',
-        instructions: 'اكتب أفكارك السلبية وحللها',
+        instructions: ['اكتب أفكارك السلبية وحللها'],
         type: ExerciseType.cognitive,
         estimatedDuration: const Duration(minutes: 15),
         questions: [
@@ -702,6 +742,10 @@ class TherapyProvider with ChangeNotifier {
           'ما هي الأدلة على صحة هذه الأفكار؟',
           'ما هي الأدلة ضد هذه الأفكار؟',
         ],
+        tips: ['خذ وقتك في التفكير', 'كن صادقاً مع نفسك'],
+        objectives: ['تحديد الأفكار السلبية', 'تطوير تفكير إيجابي'],
+        difficulty: ExerciseDifficulty.beginner,
+        isRepeatable: true,
         createdAt: now,
         updatedAt: now,
       ),
@@ -710,7 +754,7 @@ class TherapyProvider with ChangeNotifier {
         sessionId: sessionId,
         title: 'تمرين التنفس',
         description: 'تمرين للاسترخاء والتهدئة',
-        instructions: 'مارس تمرين التنفس العميق لمدة 10 دقائق',
+        instructions: ['مارس تمرين التنفس العميق لمدة 10 دقائق'],
         type: ExerciseType.breathing,
         estimatedDuration: const Duration(minutes: 10),
         questions: [
@@ -718,6 +762,10 @@ class TherapyProvider with ChangeNotifier {
           'كيف شعرت بعد التمرين؟',
           'هل لاحظت أي تغيير في مستوى التوتر؟',
         ],
+        tips: ['اجلس في مكان هادئ', 'ركز على تنفسك'],
+        objectives: ['تقليل التوتر', 'تحسين التركيز'],
+        difficulty: ExerciseDifficulty.beginner,
+        isRepeatable: true,
         createdAt: now,
         updatedAt: now,
       ),

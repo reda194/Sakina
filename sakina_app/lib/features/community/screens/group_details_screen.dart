@@ -783,7 +783,7 @@ class _GroupDetailsScreenState extends State<GroupDetailsScreen>
             : LoadingButton(
                 onPressed: _isLoading ? null : _joinGroup,
                 isLoading: _isLoading,
-                child: const Text('انضمام للمجموعة'),
+                text: 'انضمام للمجموعة',
               ),
       ),
     );
@@ -950,6 +950,10 @@ class _GroupDetailsScreenState extends State<GroupDetailsScreen>
         return Icons.sentiment_neutral;
       case GroupType.trauma:
         return Icons.healing;
+      case GroupType.stress:
+        return Icons.warning;
+      case GroupType.selfCare:
+        return Icons.spa;
       case GroupType.general:
         return Icons.forum;
     }
@@ -977,6 +981,10 @@ class _GroupDetailsScreenState extends State<GroupDetailsScreen>
         return Colors.grey;
       case GroupType.trauma:
         return Colors.purple;
+      case GroupType.stress:
+        return Colors.deepOrange;
+      case GroupType.selfCare:
+        return Colors.teal;
       case GroupType.general:
         return AppTheme.textSecondary;
     }
@@ -1004,6 +1012,10 @@ class _GroupDetailsScreenState extends State<GroupDetailsScreen>
         return 'الحزن والفقدان';
       case GroupType.trauma:
         return 'الصدمات';
+      case GroupType.stress:
+        return 'التوتر';
+      case GroupType.selfCare:
+        return 'العناية بالذات';
       case GroupType.general:
         return 'عام';
     }

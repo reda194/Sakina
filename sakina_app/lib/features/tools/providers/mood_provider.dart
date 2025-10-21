@@ -51,7 +51,7 @@ class MoodProvider extends ChangeNotifier {
   // Calculate average mood for a period
   double? getAverageMood(List<MoodEntry> entries) {
     if (entries.isEmpty) return null;
-    final sum = entries.fold(0, (sum, entry) => sum + entry.mood);
+    final sum = entries.fold(0, (sum, entry) => sum + entry.mood.numericValue);
     return sum / entries.length;
   }
 
@@ -152,7 +152,7 @@ class MoodProvider extends ChangeNotifier {
 
       entries.add(MoodEntry(
         id: 'mood_$i',
-        mood: mood,
+        mood: MoodType.fromNumeric(mood),
         note: i % 3 == 0 ? 'شعرت بتحسن اليوم' : null,
         timestamp: date,
         userId: userId,

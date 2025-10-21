@@ -511,7 +511,7 @@ class _AddMoodDialogState extends State<AddMoodDialog> {
     final moodProvider = Provider.of<MoodProvider>(context, listen: false);
     final entry = MoodEntry(
       id: 'mood_${DateTime.now().millisecondsSinceEpoch}',
-      mood: _selectedMood!,
+      mood: MoodType.fromNumeric(_selectedMood!),
       note: _noteController.text.isNotEmpty ? _noteController.text : null,
       timestamp: DateTime.now(),
       userId: 'current_user', // TODO: Get actual user ID

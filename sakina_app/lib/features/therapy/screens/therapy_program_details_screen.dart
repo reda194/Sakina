@@ -351,7 +351,7 @@ class _TherapyProgramDetailsScreenState
               Center(
                 child: Text(
                   'و ${widget.program.sessions.length - 3} جلسة أخرى...',
-                  style: TextStyle(
+                  style: const TextStyle(
                     color: AppTheme.textSecondary,
                     fontSize: 12,
                   ),

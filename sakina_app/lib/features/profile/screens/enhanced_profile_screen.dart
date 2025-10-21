@@ -318,7 +318,7 @@ class _EnhancedProfileScreenState extends State<EnhancedProfileScreen>
             ],
           ),
           SizedBox(height: ResponsiveUtils.getResponsiveSpacing(context, 16.0)),
-          ResponsiveText(
+          const ResponsiveText(
             'سارة أحمد',
             baseFontSize: 24.0,
             fontWeight: FontWeight.bold,
@@ -356,7 +356,7 @@ class _EnhancedProfileScreenState extends State<EnhancedProfileScreen>
     return Column(
       crossAxisAlignment: CrossAxisAlignment.start,
       children: [
-        ResponsiveText(
+        const ResponsiveText(
           'إحصائياتي',
           baseFontSize: 20.0,
           fontWeight: FontWeight.bold,
@@ -396,7 +396,7 @@ class _EnhancedProfileScreenState extends State<EnhancedProfileScreen>
               ),
             ),
             SizedBox(width: ResponsiveUtils.getResponsiveSpacing(context, 12.0)),
-            Expanded(
+            const Expanded(
               child: StatCard(
                 title: 'مستوى السعادة',
                 value: '85%',
@@ -414,7 +414,7 @@ class _EnhancedProfileScreenState extends State<EnhancedProfileScreen>
     return Column(
       crossAxisAlignment: CrossAxisAlignment.start,
       children: [
-        ResponsiveText(
+        const ResponsiveText(
           'الحساب',
           baseFontSize: 20.0,
           fontWeight: FontWeight.bold,
@@ -469,7 +469,7 @@ class _EnhancedProfileScreenState extends State<EnhancedProfileScreen>
     return Column(
       crossAxisAlignment: CrossAxisAlignment.start,
       children: [
-        ResponsiveText(
+        const ResponsiveText(
           'الدعم',
           baseFontSize: 20.0,
           fontWeight: FontWeight.bold,

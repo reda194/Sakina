@@ -1,6 +1,59 @@
+/// Enum representing mood levels on a 1-5 scale
+enum MoodType {
+  veryBad(1),
+  bad(2),
+  neutral(3),
+  good(4),
+  excellent(5);
+
+  final int numericValue;
+  const MoodType(this.numericValue);
+
+  /// Convert to double for calculations
+  double toDouble() => numericValue.toDouble();
+
+  /// Convert to int for display/storage
+  int toInt() => numericValue;
+
+  /// Create MoodType from numeric value (1-5)
+  static MoodType fromNumeric(int value) {
+    switch (value) {
+      case 1:
+        return MoodType.veryBad;
+      case 2:
+        return MoodType.bad;
+      case 3:
+        return MoodType.neutral;
+      case 4:
+        return MoodType.good;
+      case 5:
+        return MoodType.excellent;
+      default:
+        throw ArgumentError('Mood value must be between 1 and 5, got: $value');
+    }
+  }
+
+  /// Comparison operators
+  bool operator >(MoodType other) => numericValue > other.numericValue;
+  bool operator <(MoodType other) => numericValue < other.numericValue;
+  bool operator >=(MoodType other) => numericValue >= other.numericValue;
+  bool operator <=(MoodType other) => numericValue <= other.numericValue;
+
+  /// Arithmetic helpers returning MoodType
+  MoodType add(int value) {
+    final newValue = (numericValue + value).clamp(1, 5);
+    return MoodType.fromNumeric(newValue);
+  }
+
+  MoodType subtract(int value) {
+    final newValue = (numericValue - value).clamp(1, 5);
+    return MoodType.fromNumeric(newValue);
+  }
+}
+
 class MoodEntry {
   final String id;
-  final int mood; // 1-5 scale
+  final MoodType mood;
   final String? note;
   final DateTime timestamp;
   final String userId;
@@ -23,18 +76,41 @@ class MoodEntry {
     this.sleepQuality,
   });
 
+  // Alias getters for backward compatibility
+  DateTime get date => timestamp;
+  int? get sleep => sleepQuality;
+  int? get energy => energyLevel;
+  int? get stress => anxietyLevel;
+
   factory MoodEntry.fromJson(Map<String, dynamic> json) {
+    // Handle both legacy int (1-5) and new enum string formats
+    MoodType parsedMood;
+    final moodValue = json['mood'];
+
+    if (moodValue is int) {
+      // Legacy format: int 1-5
+      parsedMood = MoodType.fromNumeric(moodValue);
+    } else if (moodValue is String) {
+      // New format: enum name
+      parsedMood = MoodType.values.firstWhere(
+        (e) => e.name == moodValue,
+        orElse: () => MoodType.neutral,
+      );
+    } else {
+      throw ArgumentError('Invalid mood value type: ${moodValue.runtimeType}');
+    }
+
     return MoodEntry(
       id: json['id'],
-      mood: json['mood'],
+      mood: parsedMood,
       note: json['note'],
       timestamp: DateTime.parse(json['timestamp']),
       userId: json['userId'],
-      triggers: json['triggers'] != null 
-          ? List<String>.from(json['triggers']) 
+      triggers: json['triggers'] != null
+          ? List<String>.from(json['triggers'])
           : null,
-      activities: json['activities'] != null 
-          ? List<String>.from(json['activities']) 
+      activities: json['activities'] != null
+          ? List<String>.from(json['activities'])
           : null,
       energyLevel: json['energyLevel'],
       anxietyLevel: json['anxietyLevel'],
@@ -45,7 +121,7 @@ class MoodEntry {
   Map<String, dynamic> toJson() {
     return {
       'id': id,
-      'mood': mood,
+      'mood': mood.name, // Serialize as enum name for forward compatibility
       'note': note,
       'timestamp': timestamp.toIso8601String(),
       'userId': userId,
@@ -59,7 +135,7 @@ class MoodEntry {
 
   MoodEntry copyWith({
     String? id,
-    int? mood,
+    MoodType? mood,
     String? note,
     DateTime? timestamp,
     String? userId,
@@ -85,35 +161,31 @@ class MoodEntry {
 
   String get moodText {
     switch (mood) {
-      case 5:
+      case MoodType.excellent:
         return 'ممتاز';
-      case 4:
+      case MoodType.good:
         return 'جيد';
-      case 3:
+      case MoodType.neutral:
         return 'عادي';
-      case 2:
+      case MoodType.bad:
         return 'سيء';
-      case 1:
+      case MoodType.veryBad:
         return 'سيء جداً';
-      default:
-        return 'غير محدد';
     }
   }
 
   String get moodEmoji {
     switch (mood) {
-      case 5:
+      case MoodType.excellent:
         return '😊';
-      case 4:
+      case MoodType.good:
         return '🙂';
-      case 3:
+      case MoodType.neutral:
         return '😐';
-      case 2:
+      case MoodType.bad:
         return '😔';
-      case 1:
+      case MoodType.veryBad:
         return '😢';
-      default:
-        return '❓';
     }
   }
 } 

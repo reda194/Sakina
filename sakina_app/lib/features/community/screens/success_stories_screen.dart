@@ -422,6 +422,10 @@ class _SuccessStoriesScreenState extends State<SuccessStoriesScreen> {
         return 'التعليم';
       case StoryCategory.family:
         return 'الأسرة';
+      case StoryCategory.selfCare:
+        return 'العناية بالذات';
+      case StoryCategory.general:
+        return 'عام';
     }
   }
 
@@ -443,6 +447,10 @@ class _SuccessStoriesScreenState extends State<SuccessStoriesScreen> {
         return Colors.blue;
       case StoryCategory.family:
         return Colors.teal;
+      case StoryCategory.selfCare:
+        return Colors.indigo;
+      case StoryCategory.general:
+        return AppTheme.textSecondary;
     }
   }
 }
@@ -691,7 +699,7 @@ class _CreateStoryScreenState extends State<CreateStoryScreen> {
                     ),
                   ],
                 ),
-                if (_titleController.text.trim().isNotEmpty) ..[
+                if (_titleController.text.trim().isNotEmpty) ...[
                   const SizedBox(height: 12),
                   Text(
                     _titleController.text,
@@ -785,6 +793,10 @@ class _CreateStoryScreenState extends State<CreateStoryScreen> {
         return 'التعليم';
       case StoryCategory.family:
         return 'الأسرة';
+      case StoryCategory.selfCare:
+        return 'العناية بالذات';
+      case StoryCategory.general:
+        return 'عام';
     }
   }
 
@@ -806,6 +818,10 @@ class _CreateStoryScreenState extends State<CreateStoryScreen> {
         return Colors.blue;
       case StoryCategory.family:
         return Colors.teal;
+      case StoryCategory.selfCare:
+        return Colors.indigo;
+      case StoryCategory.general:
+        return AppTheme.textSecondary;
     }
   }
 }

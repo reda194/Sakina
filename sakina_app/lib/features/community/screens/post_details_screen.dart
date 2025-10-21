@@ -720,7 +720,7 @@ class _PostDetailsScreenState extends State<PostDetailsScreen> {
           LoadingButton(
             onPressed: _isLoading ? null : _addComment,
             isLoading: _isLoading,
-            child: const Icon(Icons.send),
+            text: 'إرسال',
           ),
         ],
       ),
@@ -738,21 +738,11 @@ class _PostDetailsScreenState extends State<PostDetailsScreen> {
     try {
       final provider = Provider.of<CommunityProvider>(context, listen: false);
       
-      final comment = CommentModel(
-        id: DateTime.now().millisecondsSinceEpoch.toString(),
+      await provider.addComment(
         postId: widget.post.id,
-        authorId: 'current_user_id', // TODO: Get from auth
-        authorName: 'أنت', // TODO: Get from user profile
-        authorAvatar: null, // TODO: Get from user profile
         content: content,
-        createdAt: DateTime.now(),
-        updatedAt: DateTime.now(),
-        likesCount: 0,
-        isLiked: false,
         isAnonymous: false,
       );
-
-      await provider.addComment(comment);
       _commentController.clear();
       
       if (mounted) {
@@ -934,6 +924,10 @@ class _PostDetailsScreenState extends State<PostDetailsScreen> {
         return '🙏';
       case PostMood.hopeful:
         return '🌟';
+      case PostMood.frustrated:
+        return '😤';
+      case PostMood.peaceful:
+        return '😌';
       case PostMood.overwhelmed:
         return '😵';
     }
@@ -955,6 +949,10 @@ class _PostDetailsScreenState extends State<PostDetailsScreen> {
         return 'ممتن';
       case PostMood.hopeful:
         return 'متفائل';
+      case PostMood.frustrated:
+        return 'محبط';
+      case PostMood.peaceful:
+        return 'هادئ';
       case PostMood.overwhelmed:
         return 'مرهق';
     }
@@ -976,6 +974,10 @@ class _PostDetailsScreenState extends State<PostDetailsScreen> {
         return Colors.green;
       case PostMood.hopeful:
         return AppTheme.primaryColor;
+      case PostMood.frustrated:
+        return Colors.orange;
+      case PostMood.peaceful:
+        return Colors.teal;
       case PostMood.overwhelmed:
         return Colors.grey;
     }

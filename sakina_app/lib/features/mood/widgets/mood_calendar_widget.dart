@@ -1,6 +1,6 @@
 import 'package:flutter/material.dart';
 import 'package:table_calendar/table_calendar.dart';
-import '../models/mood_entry.dart';
+import '../../../models/mood_entry.dart';
 import '../../../core/themes/app_theme.dart';
 
 class MoodCalendarWidget extends StatefulWidget {
@@ -267,8 +267,8 @@ class _MoodCalendarWidgetState extends State<MoodCalendarWidget>
       backgroundColor = AppTheme.primaryColor.withOpacity(0.3);
       borderColor = AppTheme.primaryColor;
     } else if (moodEntry != null) {
-      backgroundColor = _getMoodColor(moodEntry.mood).withOpacity(0.3);
-      borderColor = _getMoodColor(moodEntry.mood);
+      backgroundColor = _getMoodColor(moodEntry.mood.toInt()).withOpacity(0.3);
+      borderColor = _getMoodColor(moodEntry.mood.toInt());
     }
     
     return Container(
@@ -299,7 +299,7 @@ class _MoodCalendarWidgetState extends State<MoodCalendarWidget>
                 width: 8,
                 height: 8,
                 decoration: BoxDecoration(
-                  color: _getMoodColor(moodEntry.mood),
+                  color: _getMoodColor(moodEntry.mood.toInt()),
                   shape: BoxShape.circle,
                   border: Border.all(color: Colors.white, width: 1),
                 ),
@@ -312,9 +312,9 @@ class _MoodCalendarWidgetState extends State<MoodCalendarWidget>
 
   Widget _buildSelectedDayDetails() {
     if (_selectedDayMood == null) return const SizedBox.shrink();
-    
+
     final mood = _selectedDayMood!;
-    final moodData = _getMoodData(mood.mood);
+    final moodData = _getMoodData(mood.mood.toInt());
     
     return Container(
       width: double.infinity,
@@ -363,20 +363,20 @@ class _MoodCalendarWidgetState extends State<MoodCalendarWidget>
           // Factors
           Row(
             children: [
-              _buildFactorChip('طاقة', mood.energy, Colors.green),
+              _buildFactorChip('طاقة', mood.energyLevel ?? 3, Colors.green),
               const SizedBox(width: 8),
-              _buildFactorChip('نوم', mood.sleep, Colors.blue),
+              _buildFactorChip('نوم', mood.sleepQuality ?? 3, Colors.blue),
               const SizedBox(width: 8),
-              _buildFactorChip('توتر', mood.stress, Colors.orange),
+              _buildFactorChip('توتر', mood.anxietyLevel ?? 3, Colors.orange),
             ],
           ),
           
-          if (mood.factors.isNotEmpty) ...[
+          if (mood.triggers?.isNotEmpty ?? false) ...[
             const SizedBox(height: 12),
             Wrap(
               spacing: 6,
               runSpacing: 6,
-              children: mood.factors.map((factor) {
+              children: mood.triggers!.map((factor) {
                 return Container(
                   padding: const EdgeInsets.symmetric(horizontal: 8, vertical: 4),
                   decoration: BoxDecoration(
@@ -395,7 +395,7 @@ class _MoodCalendarWidgetState extends State<MoodCalendarWidget>
             ),
           ],
           
-          if (mood.notes.isNotEmpty) ...[
+          if (mood.note?.isNotEmpty ?? false) ...[
             const SizedBox(height: 12),
             Container(
               width: double.infinity,
@@ -405,7 +405,7 @@ class _MoodCalendarWidgetState extends State<MoodCalendarWidget>
                 borderRadius: BorderRadius.circular(8),
               ),
               child: Text(
-                mood.notes,
+                mood.note!,
                 style: const TextStyle(
                   fontSize: 12,
                   fontStyle: FontStyle.italic,
@@ -553,7 +553,7 @@ class _MoodCalendarWidgetState extends State<MoodCalendarWidget>
       );
     }
     
-    final averageMood = monthEntries.map((e) => e.mood).reduce((a, b) => a + b) / monthEntries.length;
+    final averageMood = monthEntries.map((e) => e.mood.numericValue).reduce((a, b) => a + b) / monthEntries.length;
     final bestDay = monthEntries.reduce((a, b) => a.mood > b.mood ? a : b);
     final worstDay = monthEntries.reduce((a, b) => a.mood < b.mood ? a : b);
     

@@ -563,12 +563,7 @@ class _AssessmentScreenState extends State<AssessmentScreen> {
                     }
                   : null,
               isLoading: _isLoading,
-              child: Text(
-                isLastPage ? 'إنهاء التقييم' : (isFirstPage ? 'بدء التقييم' : 'التالي'),
-                style: const TextStyle(
-                  fontWeight: FontWeight.bold,
-                ),
-              ),
+              text: isLastPage ? 'إنهاء التقييم' : (isFirstPage ? 'بدء التقييم' : 'التالي'),
             ),
           ),
         ],

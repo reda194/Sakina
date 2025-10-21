@@ -224,6 +224,7 @@ class SupportGroupModel {
   final bool isJoined;
   final bool isModerator;
   final DateTime createdAt;
+  final DateTime lastActivity;
   final List<String> tags;
   final List<String> moderators;
   final GroupRules rules;
@@ -240,6 +241,7 @@ class SupportGroupModel {
     required this.isJoined,
     required this.isModerator,
     required this.createdAt,
+    required this.lastActivity,
     required this.tags,
     required this.moderators,
     required this.rules,
@@ -262,6 +264,9 @@ class SupportGroupModel {
       isJoined: json['isJoined'] ?? false,
       isModerator: json['isModerator'] ?? false,
       createdAt: DateTime.parse(json['createdAt']),
+      lastActivity: json['lastActivity'] != null
+          ? DateTime.parse(json['lastActivity'])
+          : DateTime.now(),
       tags: List<String>.from(json['tags'] ?? []),
       moderators: List<String>.from(json['moderators'] ?? []),
       rules: GroupRules.fromJson(json['rules'] ?? {}),
@@ -281,6 +286,7 @@ class SupportGroupModel {
       'isJoined': isJoined,
       'isModerator': isModerator,
       'createdAt': createdAt.toIso8601String(),
+      'lastActivity': lastActivity.toIso8601String(),
       'tags': tags,
       'moderators': moderators,
       'rules': rules.toJson(),
@@ -331,6 +337,7 @@ class GroupRules {
 class SuccessStoryModel {
   final String id;
   final String title;
+  final String summary;
   final String content;
   final String authorName;
   final String? authorAvatar;
@@ -338,6 +345,7 @@ class SuccessStoryModel {
   final DateTime createdAt;
   final int likesCount;
   final int commentsCount;
+  final int viewsCount;
   final bool isLiked;
   final List<String> tags;
   final StoryCategory category;
@@ -346,6 +354,7 @@ class SuccessStoryModel {
   SuccessStoryModel({
     required this.id,
     required this.title,
+    required this.summary,
     required this.content,
     required this.authorName,
     this.authorAvatar,
@@ -353,6 +362,7 @@ class SuccessStoryModel {
     required this.createdAt,
     required this.likesCount,
     required this.commentsCount,
+    required this.viewsCount,
     required this.isLiked,
     required this.tags,
     required this.category,
@@ -363,6 +373,7 @@ class SuccessStoryModel {
     return SuccessStoryModel(
       id: json['id'],
       title: json['title'],
+      summary: json['summary'] ?? '',
       content: json['content'],
       authorName: json['authorName'],
       authorAvatar: json['authorAvatar'],
@@ -370,6 +381,7 @@ class SuccessStoryModel {
       createdAt: DateTime.parse(json['createdAt']),
       likesCount: json['likesCount'] ?? 0,
       commentsCount: json['commentsCount'] ?? 0,
+      viewsCount: json['viewsCount'] ?? 0,
       isLiked: json['isLiked'] ?? false,
       tags: List<String>.from(json['tags'] ?? []),
       category: StoryCategory.values.firstWhere(
@@ -383,6 +395,7 @@ class SuccessStoryModel {
     return {
       'id': id,
       'title': title,
+      'summary': summary,
       'content': content,
       'authorName': authorName,
       'authorAvatar': authorAvatar,
@@ -390,6 +403,7 @@ class SuccessStoryModel {
       'createdAt': createdAt.toIso8601String(),
       'likesCount': likesCount,
       'commentsCount': commentsCount,
+      'viewsCount': viewsCount,
       'isLiked': isLiked,
       'tags': tags,
       'category': category.toString().split('.').last,
@@ -418,6 +432,8 @@ enum PostMood {
   happy,
   sad,
   anxious,
+  angry,
+  excited,
   hopeful,
   grateful,
   frustrated,
@@ -426,10 +442,15 @@ enum PostMood {
 }
 
 enum GroupType {
+  support,
+  therapy,
+  meditation,
   anxiety,
   depression,
   stress,
   relationships,
+  parenting,
+  trauma,
   selfCare,
   addiction,
   grief,
@@ -445,6 +466,9 @@ enum GroupPrivacy {
 enum StoryCategory {
   recovery,
   therapy,
+  personal,
+  health,
+  education,
   selfCare,
   relationships,
   career,

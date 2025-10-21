@@ -41,7 +41,7 @@ class _CreatePostScreenState extends State<CreatePostScreen> {
           LoadingButton(
             onPressed: _isLoading ? null : _createPost,
             isLoading: _isLoading,
-            child: const Text('نشر'),
+            text: 'نشر',
           ),
         ],
       ),
@@ -456,7 +456,7 @@ class _CreatePostScreenState extends State<CreatePostScreen> {
                         ),
                         child: Text(
                           '#$tag',
-                          style: TextStyle(
+                          style: const TextStyle(
                             fontSize: 10,
                             color: AppTheme.primaryColor,
                           ),
@@ -499,27 +499,13 @@ class _CreatePostScreenState extends State<CreatePostScreen> {
     try {
       final provider = Provider.of<CommunityProvider>(context, listen: false);
       
-      final post = CommunityPostModel(
-        id: DateTime.now().millisecondsSinceEpoch.toString(),
-        authorId: 'current_user_id', // TODO: Get from auth
-        authorName: _isAnonymous ? 'مستخدم مجهول' : 'أنت',
-        authorAvatar: _isAnonymous ? null : null, // TODO: Get from user profile
+      await provider.createPost(
         content: _contentController.text.trim(),
         type: _selectedType,
-        mood: _selectedMood,
         tags: _tags,
         isAnonymous: _isAnonymous,
-        createdAt: DateTime.now(),
-        updatedAt: DateTime.now(),
-        likesCount: 0,
-        commentsCount: 0,
-        sharesCount: 0,
-        isLiked: false,
-        isBookmarked: false,
-        status: PostStatus.published,
+        mood: _selectedMood,
       );
-
-      await provider.createPost(post);
       
       if (mounted) {
         Navigator.pop(context);
@@ -632,6 +618,10 @@ class _CreatePostScreenState extends State<CreatePostScreen> {
         return '🙏';
       case PostMood.hopeful:
         return '🌟';
+      case PostMood.frustrated:
+        return '😤';
+      case PostMood.peaceful:
+        return '😌';
       case PostMood.overwhelmed:
         return '😵';
     }
@@ -653,6 +643,10 @@ class _CreatePostScreenState extends State<CreatePostScreen> {
         return 'ممتن';
       case PostMood.hopeful:
         return 'متفائل';
+      case PostMood.frustrated:
+        return 'محبط';
+      case PostMood.peaceful:
+        return 'هادئ';
       case PostMood.overwhelmed:
         return 'مرهق';
     }
@@ -674,6 +668,10 @@ class _CreatePostScreenState extends State<CreatePostScreen> {
         return Colors.green;
       case PostMood.hopeful:
         return AppTheme.primaryColor;
+      case PostMood.frustrated:
+        return Colors.orange;
+      case PostMood.peaceful:
+        return Colors.teal;
       case PostMood.overwhelmed:
         return Colors.grey;
     }

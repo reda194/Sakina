@@ -14,6 +14,9 @@ class UserModel {
   final String? languagePreference;
   final String? notificationSettings;
 
+  // Computed properties
+  String get displayName => name;
+
   UserModel({
     required this.id,
     required this.email,

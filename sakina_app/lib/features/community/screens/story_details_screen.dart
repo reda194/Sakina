@@ -692,6 +692,8 @@ class _StoryDetailsScreenState extends State<StoryDetailsScreen> {
         return 'الأسرة';
       case StoryCategory.selfCare:
         return 'العناية بالذات';
+      case StoryCategory.general:
+        return 'عام';
     }
   }
 
@@ -715,6 +717,8 @@ class _StoryDetailsScreenState extends State<StoryDetailsScreen> {
         return Colors.teal;
       case StoryCategory.selfCare:
         return Colors.indigo;
+      case StoryCategory.general:
+        return AppTheme.textSecondary;
     }
   }
 }

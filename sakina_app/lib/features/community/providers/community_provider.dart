@@ -109,6 +109,7 @@ class CommunityProvider with ChangeNotifier {
         isJoined: true,
         isModerator: false,
         createdAt: DateTime.now().subtract(const Duration(days: 30)),
+        lastActivity: DateTime.now().subtract(const Duration(hours: 2)),
         tags: ['قلق', 'توتر', 'دعم'],
         moderators: ['mod1', 'mod2'],
         rules: GroupRules(
@@ -136,6 +137,7 @@ class CommunityProvider with ChangeNotifier {
         isJoined: false,
         isModerator: false,
         createdAt: DateTime.now().subtract(const Duration(days: 45)),
+        lastActivity: DateTime.now().subtract(const Duration(hours: 5)),
         tags: ['اكتئاب', 'تعافي', 'أمل'],
         moderators: ['mod3', 'mod4'],
         rules: GroupRules(
@@ -163,6 +165,7 @@ class CommunityProvider with ChangeNotifier {
         isJoined: true,
         isModerator: false,
         createdAt: DateTime.now().subtract(const Duration(days: 20)),
+        lastActivity: DateTime.now().subtract(const Duration(hours: 1)),
         tags: ['عناية_بالذات', 'صحة', 'رفاهية'],
         moderators: ['mod5'],
         rules: GroupRules(
@@ -184,12 +187,14 @@ class CommunityProvider with ChangeNotifier {
       SuccessStoryModel(
         id: '1',
         title: 'كيف تغلبت على القلق الاجتماعي',
+        summary: 'قصة نجاح عن التغلب على القلق الاجتماعي من خلال العلاج والتأمل',
         content: 'كنت أعاني من القلق الاجتماعي لسنوات طويلة، لم أكن أستطيع التحدث أمام الناس أو حتى طلب شيء في المطعم. بدأت رحلة العلاج منذ عام، وتعلمت تقنيات التنفس والتأمل. اليوم أستطيع إلقاء العروض في العمل وأشعر بثقة أكبر في نفسي.',
         authorName: 'مجهول',
         isAnonymous: true,
         createdAt: DateTime.now().subtract(const Duration(days: 3)),
         likesCount: 45,
         commentsCount: 12,
+        viewsCount: 120,
         isLiked: true,
         tags: ['قلق_اجتماعي', 'تعافي', 'ثقة'],
         category: StoryCategory.therapy,
@@ -198,12 +203,14 @@ class CommunityProvider with ChangeNotifier {
       SuccessStoryModel(
         id: '2',
         title: 'رحلتي مع الاكتئاب والأمل',
+        summary: 'رحلة التعافي من الاكتئاب وأهمية الدعم الاجتماعي',
         content: 'مررت بفترة صعبة جداً من الاكتئاب، فقدت الاهتمام بكل شيء في حياتي. لكن بمساعدة الطبيب النفسي والدعم من الأصدقاء، تمكنت من العودة للحياة تدريجياً. الآن أمارس الرياضة وأقرأ وأستمتع بالأشياء البسيطة.',
         authorName: 'أحمد محمد',
         isAnonymous: false,
         createdAt: DateTime.now().subtract(const Duration(days: 7)),
         likesCount: 67,
         commentsCount: 23,
+        viewsCount: 200,
         isLiked: false,
         tags: ['اكتئاب', 'أمل', 'تعافي'],
         category: StoryCategory.recovery,
@@ -335,6 +342,7 @@ class CommunityProvider with ChangeNotifier {
           isJoined: !group.isJoined,
           isModerator: group.isModerator,
           createdAt: group.createdAt,
+          lastActivity: group.lastActivity,
           tags: group.tags,
           moderators: group.moderators,
           rules: group.rules,
@@ -363,6 +371,7 @@ class CommunityProvider with ChangeNotifier {
           isJoined: false,
           isModerator: group.isModerator,
           createdAt: group.createdAt,
+          lastActivity: group.lastActivity,
           tags: group.tags,
           moderators: group.moderators,
           rules: group.rules,
@@ -471,6 +480,7 @@ class CommunityProvider with ChangeNotifier {
         _stories[storyIndex] = SuccessStoryModel(
           id: story.id,
           title: story.title,
+          summary: story.summary,
           content: story.content,
           authorName: story.authorName,
           authorAvatar: story.authorAvatar,
@@ -478,6 +488,7 @@ class CommunityProvider with ChangeNotifier {
           createdAt: story.createdAt,
           likesCount: story.isLiked ? story.likesCount - 1 : story.likesCount + 1,
           commentsCount: story.commentsCount,
+          viewsCount: story.viewsCount,
           isLiked: !story.isLiked,
           tags: story.tags,
           category: story.category,
@@ -631,6 +642,7 @@ class CommunityProvider with ChangeNotifier {
         _stories[storyIndex] = SuccessStoryModel(
           id: story.id,
           title: story.title,
+          summary: story.summary,
           content: story.content,
           authorName: story.authorName,
           authorAvatar: story.authorAvatar,
@@ -638,6 +650,7 @@ class CommunityProvider with ChangeNotifier {
           createdAt: story.createdAt,
           likesCount: story.isLiked ? story.likesCount - 1 : story.likesCount + 1,
           commentsCount: story.commentsCount,
+          viewsCount: story.viewsCount,
           isLiked: !story.isLiked,
           tags: story.tags,
           category: story.category,
@@ -647,6 +660,68 @@ class CommunityProvider with ChangeNotifier {
       }
     } catch (e) {
       // Handle error
+    }
+  }
+
+  // Comments methods
+  List<CommentModel> getCommentsForPost(String postId) {
+    return _comments.where((comment) => comment.postId == postId).toList();
+  }
+
+  Future<void> likeComment(String commentId) async {
+    try {
+      final commentIndex = _comments.indexWhere((c) => c.id == commentId);
+      if (commentIndex != -1) {
+        final comment = _comments[commentIndex];
+        _comments[commentIndex] = CommentModel(
+          id: comment.id,
+          postId: comment.postId,
+          authorId: comment.authorId,
+          authorName: comment.authorName,
+          authorAvatar: comment.authorAvatar,
+          content: comment.content,
+          createdAt: comment.createdAt,
+          updatedAt: comment.updatedAt,
+          likesCount: comment.isLiked ? comment.likesCount - 1 : comment.likesCount + 1,
+          isLiked: !comment.isLiked,
+          isAnonymous: comment.isAnonymous,
+          parentCommentId: comment.parentCommentId,
+          replies: comment.replies,
+        );
+        notifyListeners();
+      }
+    } catch (e) {
+      _setError('فشل في تحديث الإعجاب بالتعليق');
+    }
+  }
+
+  // Story views
+  Future<void> incrementStoryViews(String storyId) async {
+    try {
+      final storyIndex = _stories.indexWhere((s) => s.id == storyId);
+      if (storyIndex != -1) {
+        final story = _stories[storyIndex];
+        _stories[storyIndex] = SuccessStoryModel(
+          id: story.id,
+          title: story.title,
+          summary: story.summary,
+          content: story.content,
+          authorName: story.authorName,
+          authorAvatar: story.authorAvatar,
+          isAnonymous: story.isAnonymous,
+          createdAt: story.createdAt,
+          likesCount: story.likesCount,
+          commentsCount: story.commentsCount,
+          viewsCount: story.viewsCount + 1,
+          isLiked: story.isLiked,
+          tags: story.tags,
+          category: story.category,
+          readingTimeMinutes: story.readingTimeMinutes,
+        );
+        notifyListeners();
+      }
+    } catch (e) {
+      _setError('فشل في تحديث عدد المشاهدات');
     }
   }
 
@@ -672,6 +747,7 @@ class CommunityProvider with ChangeNotifier {
 
   Future<void> createSuccessStory({
     required String title,
+    required String summary,
     required String content,
     required StoryCategory category,
     required bool isAnonymous,
@@ -680,12 +756,14 @@ class CommunityProvider with ChangeNotifier {
       final newStory = SuccessStoryModel(
         id: DateTime.now().millisecondsSinceEpoch.toString(),
         title: title,
+        summary: summary,
         content: content,
         category: category,
         authorName: isAnonymous ? 'مجهول' : 'المستخدم الحالي',
         isAnonymous: isAnonymous,
         likesCount: 0,
         commentsCount: 0,
+        viewsCount: 0,
         isLiked: false,
         tags: _extractTags(content),
         createdAt: DateTime.now(),

@@ -17,6 +17,7 @@ class AuthProvider extends ChangeNotifier {
 
   AuthStatus get status => _status;
   UserModel? get currentUser => _currentUser;
+  UserModel? get user => _currentUser; // Alias for currentUser
   String? get errorMessage => _errorMessage;
   bool get isAuthenticated => _status == AuthStatus.authenticated;
   StorageService get storageService => _storageService;

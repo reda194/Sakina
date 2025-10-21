@@ -385,7 +385,7 @@ class MoodTrendChart extends StatelessWidget {
       final dateKey = DateFormat('yyyy-MM-dd').format(entry.timestamp);
       dailyData[dateKey] = {
         'date': entry.timestamp,
-        'mood': entry.mood,
+        'mood': entry.mood.numericValue,
         'energy': entry.energyLevel,
         'sleep': entry.sleepQuality,
       };

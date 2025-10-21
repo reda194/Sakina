@@ -39,6 +39,12 @@ enum ExerciseType {
   physical,
 }
 
+enum ExerciseDifficulty {
+  beginner,
+  intermediate,
+  advanced,
+}
+
 class TherapyProgramModel {
   final String id;
   final String title;
@@ -228,6 +234,11 @@ class TherapyProgramModel {
     return Object.hash(id, title, type, status);
   }
 
+  // Get all exercises from all sessions
+  List<TherapyExerciseModel> get exercises {
+    return sessions.expand((session) => session.exercises).toList();
+  }
+
   @override
   String toString() {
     return 'TherapyProgramModel(id: $id, title: $title, type: $type, status: $status, progress: $progress)';
@@ -251,6 +262,9 @@ class TherapySessionModel {
   final DateTime? completedAt;
   final double? userRating;
   final String? userNotes;
+  final List<String> objectives;
+  final List<String> keyPoints;
+  final String? notes;
   final DateTime createdAt;
   final DateTime updatedAt;
 
@@ -271,6 +285,9 @@ class TherapySessionModel {
     this.completedAt,
     this.userRating,
     this.userNotes,
+    required this.objectives,
+    required this.keyPoints,
+    this.notes,
     required this.createdAt,
     required this.updatedAt,
   });
@@ -301,6 +318,9 @@ class TherapySessionModel {
           : null,
       userRating: (json['userRating'] as num?)?.toDouble(),
       userNotes: json['userNotes'] as String?,
+      objectives: List<String>.from(json['objectives'] as List),
+      keyPoints: List<String>.from(json['keyPoints'] as List),
+      notes: json['notes'] as String?,
       createdAt: DateTime.parse(json['createdAt'] as String),
       updatedAt: DateTime.parse(json['updatedAt'] as String),
     );
@@ -324,6 +344,9 @@ class TherapySessionModel {
       'completedAt': completedAt?.toIso8601String(),
       'userRating': userRating,
       'userNotes': userNotes,
+      'objectives': objectives,
+      'keyPoints': keyPoints,
+      'notes': notes,
       'createdAt': createdAt.toIso8601String(),
       'updatedAt': updatedAt.toIso8601String(),
     };
@@ -346,6 +369,9 @@ class TherapySessionModel {
     DateTime? completedAt,
     double? userRating,
     String? userNotes,
+    List<String>? objectives,
+    List<String>? keyPoints,
+    String? notes,
     DateTime? createdAt,
     DateTime? updatedAt,
   }) {
@@ -366,6 +392,9 @@ class TherapySessionModel {
       completedAt: completedAt ?? this.completedAt,
       userRating: userRating ?? this.userRating,
       userNotes: userNotes ?? this.userNotes,
+      objectives: objectives ?? this.objectives,
+      keyPoints: keyPoints ?? this.keyPoints,
+      notes: notes ?? this.notes,
       createdAt: createdAt ?? this.createdAt,
       updatedAt: updatedAt ?? this.updatedAt,
     );
@@ -377,10 +406,15 @@ class TherapyExerciseModel {
   final String sessionId;
   final String title;
   final String description;
-  final String instructions;
+  final List<String> instructions;
   final ExerciseType type;
   final Duration estimatedDuration;
   final List<String> questions;
+  final List<String> tips;
+  final List<String> objectives;
+  final ExerciseDifficulty difficulty;
+  final bool isRepeatable;
+  final String? userNotes;
   final Map<String, dynamic>? exerciseData;
   final bool isCompleted;
   final DateTime? completedAt;
@@ -397,6 +431,11 @@ class TherapyExerciseModel {
     required this.type,
     required this.estimatedDuration,
     required this.questions,
+    this.tips = const [],
+    this.objectives = const [],
+    this.difficulty = ExerciseDifficulty.beginner,
+    this.isRepeatable = false,
+    this.userNotes,
     this.exerciseData,
     this.isCompleted = false,
     this.completedAt,
@@ -413,7 +452,7 @@ class TherapyExerciseModel {
       sessionId: json['sessionId'] as String,
       title: json['title'] as String,
       description: json['description'] as String,
-      instructions: json['instructions'] as String,
+      instructions: List<String>.from(json['instructions'] as List),
       type: ExerciseType.values.firstWhere(
         (e) => e.name == json['type'],
         orElse: () => ExerciseType.reflection,
@@ -422,6 +461,14 @@ class TherapyExerciseModel {
         minutes: json['estimatedDurationMinutes'] as int,
       ),
       questions: List<String>.from(json['questions'] as List),
+      tips: json['tips'] != null ? List<String>.from(json['tips'] as List) : const [],
+      objectives: json['objectives'] != null ? List<String>.from(json['objectives'] as List) : const [],
+      difficulty: ExerciseDifficulty.values.firstWhere(
+        (e) => e.name == json['difficulty'],
+        orElse: () => ExerciseDifficulty.beginner,
+      ),
+      isRepeatable: json['isRepeatable'] as bool? ?? false,
+      userNotes: json['userNotes'] as String?,
       exerciseData: json['exerciseData'] as Map<String, dynamic>?,
       isCompleted: json['isCompleted'] as bool? ?? false,
       completedAt: json['completedAt'] != null
@@ -443,6 +490,11 @@ class TherapyExerciseModel {
       'type': type.name,
       'estimatedDurationMinutes': estimatedDuration.inMinutes,
       'questions': questions,
+      'tips': tips,
+      'objectives': objectives,
+      'difficulty': difficulty.name,
+      'isRepeatable': isRepeatable,
+      'userNotes': userNotes,
       'exerciseData': exerciseData,
       'isCompleted': isCompleted,
       'completedAt': completedAt?.toIso8601String(),
@@ -457,10 +509,15 @@ class TherapyExerciseModel {
     String? sessionId,
     String? title,
     String? description,
-    String? instructions,
+    List<String>? instructions,
     ExerciseType? type,
     Duration? estimatedDuration,
     List<String>? questions,
+    List<String>? tips,
+    List<String>? objectives,
+    ExerciseDifficulty? difficulty,
+    bool? isRepeatable,
+    String? userNotes,
     Map<String, dynamic>? exerciseData,
     bool? isCompleted,
     DateTime? completedAt,
@@ -477,6 +534,11 @@ class TherapyExerciseModel {
       type: type ?? this.type,
       estimatedDuration: estimatedDuration ?? this.estimatedDuration,
       questions: questions ?? this.questions,
+      tips: tips ?? this.tips,
+      objectives: objectives ?? this.objectives,
+      difficulty: difficulty ?? this.difficulty,
+      isRepeatable: isRepeatable ?? this.isRepeatable,
+      userNotes: userNotes ?? this.userNotes,
       exerciseData: exerciseData ?? this.exerciseData,
       isCompleted: isCompleted ?? this.isCompleted,
       completedAt: completedAt ?? this.completedAt,

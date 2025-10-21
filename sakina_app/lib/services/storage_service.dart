@@ -222,4 +222,28 @@ class StorageService {
       return {};
     }
   }
+
+  // Generic list storage methods
+  Future<List<Map<String, dynamic>>> getList(String key) async {
+    try {
+      final jsonString = getString(key);
+      if (jsonString == null) return [];
+
+      final jsonList = jsonDecode(jsonString) as List<dynamic>;
+      return jsonList.map((item) => item as Map<String, dynamic>).toList();
+    } catch (e) {
+      print('Error loading list for key $key: $e');
+      return [];
+    }
+  }
+
+  Future<void> saveList(String key, List<Map<String, dynamic>> list) async {
+    try {
+      final jsonString = jsonEncode(list);
+      await setString(key, jsonString);
+    } catch (e) {
+      print('Error saving list for key $key: $e');
+      rethrow;
+    }
+  }
 }

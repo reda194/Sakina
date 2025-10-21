@@ -546,6 +546,7 @@ class _BookConsultationScreenState extends State<BookConsultationScreen> {
       await provider.bookConsultation(
         specialistId: widget.specialist.id,
         scheduledDate: scheduledDateTime,
+        duration: const Duration(minutes: 60), // Standard consultation duration
         type: _selectedType,
         notes: _notesController.text.trim().isEmpty ? null : _notesController.text.trim(),
       );

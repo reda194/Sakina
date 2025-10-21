@@ -6,7 +6,7 @@ import '../../../core/utils/responsive_utils.dart';
 import '../../../widgets/responsive_widget.dart';
 import '../../../widgets/mental_health_widgets.dart';
 import '../providers/mood_provider.dart';
-import '../models/mood_entry.dart';
+import '../../../models/mood_entry.dart';
 
 class EnhancedMoodScreen extends StatefulWidget {
   const EnhancedMoodScreen({super.key});
@@ -276,7 +276,7 @@ class _EnhancedMoodScreenState extends State<EnhancedMoodScreen>
               ),
               SizedBox(height: ResponsiveUtils.getResponsiveSpacing(context, 24.0)),
               EnhancedMoodSelector(
-                selectedMood: moodProvider.currentMood,
+                selectedMood: moodProvider.currentMood ?? 3,
                 onMoodSelected: (mood) {
                   moodProvider.updateMood(mood);
                   _showMoodEntryDialog(mood);
@@ -401,7 +401,7 @@ class _EnhancedMoodScreenState extends State<EnhancedMoodScreen>
 
   LineChartData _buildLineChartData(List<MoodEntry> moodHistory) {
     final spots = moodHistory.asMap().entries.map((entry) {
-      return FlSpot(entry.key.toDouble(), entry.value.mood.toDouble());
+      return FlSpot(entry.key.toDouble(), entry.value.mood.numericValue.toDouble());
     }).toList();
 
     return LineChartData(
@@ -427,7 +427,7 @@ class _EnhancedMoodScreenState extends State<EnhancedMoodScreen>
             interval: 1,
             getTitlesWidget: (value, meta) {
               if (value.toInt() >= 0 && value.toInt() < moodHistory.length) {
-                final date = moodHistory[value.toInt()].date;
+                final date = moodHistory[value.toInt()].timestamp;
                 return ResponsiveText(
                   '${date.day}/${date.month}',
                   baseFontSize: 10.0,
@@ -541,7 +541,6 @@ class _EnhancedMoodScreenState extends State<EnhancedMoodScreen>
             ),
             SizedBox(height: ResponsiveUtils.getResponsiveSpacing(context, 16.0)),
             ResponsiveGridView(
-              crossAxisCount: context.isMobile ? 2 : 1,
               crossAxisSpacing: ResponsiveUtils.getResponsiveSpacing(context, 12.0),
               mainAxisSpacing: ResponsiveUtils.getResponsiveSpacing(context, 12.0),
               children: [
@@ -615,7 +614,7 @@ class _EnhancedMoodScreenState extends State<EnhancedMoodScreen>
                 Center(
                   child: TextButton(
                     onPressed: _showFullHistory,
-                    child: ResponsiveText(
+                    child: const ResponsiveText(
                       'عرض المزيد',
                       baseFontSize: 14.0,
                       color: AppTheme.primaryColor,
@@ -643,11 +642,11 @@ class _EnhancedMoodScreenState extends State<EnhancedMoodScreen>
               ResponsiveUtils.getResponsiveSpacing(context, 8.0),
             ),
             decoration: BoxDecoration(
-              color: _getMoodColor(entry.mood).withOpacity(0.1),
+              color: _getMoodColor(entry.mood.toInt()).withOpacity(0.1),
               borderRadius: ResponsiveUtils.getResponsiveBorderRadius(context, 8.0),
             ),
             child: ResponsiveText(
-              _getMoodEmoji(entry.mood),
+              _getMoodEmoji(entry.mood.toInt()),
               baseFontSize: 20.0,
             ),
           ),
@@ -657,13 +656,13 @@ class _EnhancedMoodScreenState extends State<EnhancedMoodScreen>
               crossAxisAlignment: CrossAxisAlignment.start,
               children: [
                 ResponsiveText(
-                  _getMoodLabel(entry.mood),
+                  _getMoodLabel(entry.mood.toInt()),
                   baseFontSize: 14.0,
                   fontWeight: FontWeight.w500,
                   color: AppTheme.textPrimary,
                 ),
                 ResponsiveText(
-                  _formatDate(entry.date),
+                  _formatDate(entry.timestamp),
                   baseFontSize: 12.0,
                   color: AppTheme.textSecondary,
                 ),
@@ -704,7 +703,14 @@ class _EnhancedMoodScreenState extends State<EnhancedMoodScreen>
       builder: (context) => MoodEntryDialog(
         initialMood: selectedMood,
         onMoodSaved: (mood, note) {
-          context.read<MoodProvider>().addMoodEntry(mood, note);
+          final entry = MoodEntry(
+            id: DateTime.now().millisecondsSinceEpoch.toString(),
+            userId: 'current_user',
+            mood: MoodType.fromNumeric(mood),
+            timestamp: DateTime.now(),
+            note: note,
+          );
+          context.read<MoodProvider>().addMoodEntry(entry);
           ScaffoldMessenger.of(context).showSnackBar(
             SnackBar(
               content: const Text('تم حفظ مزاجك بنجاح'),
@@ -848,7 +854,7 @@ class _MoodEntryDialogState extends State<MoodEntryDialog> {
       backgroundColor: Colors.transparent,
       child: Container(
         constraints: BoxConstraints(
-          maxWidth: ResponsiveUtils.getCardWidth(context),
+          maxWidth: ResponsiveUtils.getResponsiveCardWidth(context),
         ),
         decoration: BoxDecoration(
           color: AppTheme.surfaceColor,
@@ -952,16 +958,11 @@ class _MoodEntryDialogState extends State<MoodEntryDialog> {
                   SizedBox(width: ResponsiveUtils.getResponsiveSpacing(context, 12.0)),
                   Expanded(
                     child: ResponsiveButton(
+                      text: 'حفظ',
                       onPressed: () {
                         widget.onMoodSaved(_selectedMood, _noteController.text.trim());
                         Navigator.of(context).pop();
                       },
-                      child: const ResponsiveText(
-                        'حفظ',
-                        baseFontSize: 14.0,
-                        fontWeight: FontWeight.w600,
-                        color: Colors.white,
-                      ),
                     ),
                   ),
                 ],

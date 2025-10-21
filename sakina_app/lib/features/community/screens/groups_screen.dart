@@ -16,7 +16,6 @@ class GroupsScreen extends StatefulWidget {
 class _GroupsScreenState extends State<GroupsScreen>
     with SingleTickerProviderStateMixin {
   late TabController _tabController;
-  GroupType? _selectedType;
   String _searchQuery = '';
   final TextEditingController _searchController = TextEditingController();
 
@@ -372,7 +371,7 @@ class _GroupsScreenState extends State<GroupsScreen>
                       ),
                       child: Text(
                         '#$tag',
-                        style: TextStyle(
+                        style: const TextStyle(
                           fontSize: 10,
                           color: AppTheme.primaryColor,
                         ),
@@ -618,10 +617,26 @@ class _GroupsScreenState extends State<GroupsScreen>
         return Icons.psychology;
       case GroupType.meditation:
         return Icons.self_improvement;
-      case GroupType.discussion:
+      case GroupType.anxiety:
+        return Icons.sentiment_very_dissatisfied;
+      case GroupType.depression:
+        return Icons.sentiment_dissatisfied;
+      case GroupType.addiction:
+        return Icons.block;
+      case GroupType.relationships:
+        return Icons.people;
+      case GroupType.parenting:
+        return Icons.family_restroom;
+      case GroupType.grief:
+        return Icons.sentiment_neutral;
+      case GroupType.trauma:
+        return Icons.healing;
+      case GroupType.selfCare:
+        return Icons.spa;
+      case GroupType.general:
         return Icons.forum;
-      case GroupType.crisis:
-        return Icons.emergency;
+      case GroupType.stress:
+        return Icons.warning;
     }
   }
 
@@ -633,10 +648,26 @@ class _GroupsScreenState extends State<GroupsScreen>
         return AppTheme.primaryColor;
       case GroupType.meditation:
         return AppTheme.successColor;
-      case GroupType.discussion:
-        return AppTheme.infoColor;
-      case GroupType.crisis:
+      case GroupType.anxiety:
         return AppTheme.warningColor;
+      case GroupType.depression:
+        return Colors.blue;
+      case GroupType.addiction:
+        return Colors.red;
+      case GroupType.relationships:
+        return Colors.pink;
+      case GroupType.parenting:
+        return Colors.green;
+      case GroupType.grief:
+        return Colors.grey;
+      case GroupType.trauma:
+        return Colors.purple;
+      case GroupType.selfCare:
+        return Colors.teal;
+      case GroupType.general:
+        return AppTheme.textSecondary;
+      case GroupType.stress:
+        return Colors.deepOrange;
     }
   }
 

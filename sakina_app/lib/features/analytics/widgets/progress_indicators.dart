@@ -283,7 +283,7 @@ class ProgressIndicators extends StatelessWidget {
       ),
       child: Row(
         children: [
-          Icon(
+          const Icon(
             isPositive ? Icons.trending_up : Icons.trending_down,
             size: 16,
             color: isPositive ? AppTheme.successColor : AppTheme.errorColor,
@@ -294,7 +294,7 @@ class ProgressIndicators extends StatelessWidget {
               isPositive 
                   ? 'تحسن بنسبة ${(improvement * 100).toInt()}% مقارنة بالأسبوع الماضي'
                   : 'انخفاض بنسبة ${(improvement.abs() * 100).toInt()}% مقارنة بالأسبوع الماضي',
-              style: TextStyle(
+              style: const TextStyle(
                 fontSize: 11,
                 color: isPositive ? AppTheme.successColor : AppTheme.errorColor,
               ),

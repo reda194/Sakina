@@ -180,7 +180,8 @@ class _AuthButtonState extends State<AuthButton>
 
 /// زر تحميل مخصص للاستخدام العام
 class LoadingButton extends StatelessWidget {
-  final String text;
+  final String? text;
+  final Widget? child;
   final VoidCallback? onPressed;
   final bool isLoading;
   final IconData? icon;
@@ -192,7 +193,8 @@ class LoadingButton extends StatelessWidget {
 
   const LoadingButton({
     super.key,
-    required this.text,
+    this.text,
+    this.child,
     this.onPressed,
     this.isLoading = false,
     this.icon,
@@ -201,7 +203,7 @@ class LoadingButton extends StatelessWidget {
     this.width,
     this.height = 48,
     this.padding,
-  });
+  }) : assert(text != null || child != null, 'Either text or child must be provided');
 
   @override
   Widget build(BuildContext context) {
@@ -241,13 +243,16 @@ class LoadingButton extends StatelessWidget {
                     ),
                     const SizedBox(width: 6),
                   ],
-                  Text(
-                    text,
-                    style: AppTheme.bodyMedium.copyWith(
-                      fontWeight: FontWeight.w600,
-                      color: textColor ?? Colors.white,
-                    ),
-                  ),
+                  if (text != null)
+                    Text(
+                      text!,
+                      style: AppTheme.bodyMedium.copyWith(
+                        fontWeight: FontWeight.w600,
+                        color: textColor ?? Colors.white,
+                      ),
+                    )
+                  else if (child != null)
+                    child!,
                 ],
               ),
       ),

@@ -867,6 +867,16 @@ class _MyProgramsScreenState extends State<MyProgramsScreen>
         return Icons.spa;
       case ExerciseType.cognitive:
         return Icons.lightbulb;
+      case ExerciseType.reading:
+        return Icons.menu_book;
+      case ExerciseType.writing:
+        return Icons.edit;
+      case ExerciseType.behavioral:
+        return Icons.track_changes;
+      case ExerciseType.reflection:
+        return Icons.visibility;
+      case ExerciseType.physical:
+        return Icons.fitness_center;
     }
   }
 
@@ -884,6 +894,16 @@ class _MyProgramsScreenState extends State<MyProgramsScreen>
         return Colors.purple;
       case ExerciseType.cognitive:
         return Colors.orange;
+      case ExerciseType.reading:
+        return Colors.blue;
+      case ExerciseType.writing:
+        return AppTheme.warningColor;
+      case ExerciseType.behavioral:
+        return Colors.green;
+      case ExerciseType.reflection:
+        return Colors.indigo;
+      case ExerciseType.physical:
+        return Colors.red;
     }
   }
 
@@ -901,6 +921,16 @@ class _MyProgramsScreenState extends State<MyProgramsScreen>
         return 'استرخاء';
       case ExerciseType.cognitive:
         return 'معرفي';
+      case ExerciseType.reading:
+        return 'قراءة';
+      case ExerciseType.writing:
+        return 'كتابة';
+      case ExerciseType.behavioral:
+        return 'سلوكي';
+      case ExerciseType.reflection:
+        return 'تأمل';
+      case ExerciseType.physical:
+        return 'جسدي';
     }
   }
 }
