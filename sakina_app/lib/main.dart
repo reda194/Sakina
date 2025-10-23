@@ -8,6 +8,7 @@ import 'package:flutter_localizations/flutter_localizations.dart';
 import 'core/themes/app_theme.dart';
 import 'core/localization/app_localizations.dart';
 import 'services/storage_service.dart';
+import 'services/app_service.dart';
 
 // Feature imports
 import 'features/auth/providers/auth_provider.dart';
@@ -27,6 +28,9 @@ void main() async {
   const secureStorage = FlutterSecureStorage();
   final storageService = StorageService(prefs, secureStorage);
 
+  // Initialize AppService before runApp to prevent race conditions
+  await AppService.instance.initialize(storageService);
+
   runApp(SakinaApp(storageService: storageService));
 }
 
@@ -39,6 +43,9 @@ class SakinaApp extends StatelessWidget {
   Widget build(BuildContext context) {
     return MultiProvider(
       providers: [
+        ChangeNotifierProvider.value(
+          value: AppService.instance,
+        ),
         ChangeNotifierProvider(
           create: (context) => AuthProvider(storageService),
         ),

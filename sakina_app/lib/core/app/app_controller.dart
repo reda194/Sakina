@@ -1,5 +1,6 @@
 import 'package:flutter/material.dart';
 import 'package:shared_preferences/shared_preferences.dart';
+import '../../services/app_service.dart';
 
 class AppController extends ChangeNotifier {
   static AppController? _instance;
@@ -138,6 +139,14 @@ class AppController extends ChangeNotifier {
   }
 
   Future<void> logout() async {
+    try {
+      // Call AppService logout to ensure Appwrite session is terminated
+      await AppService.instance.logout();
+    } catch (e) {
+      debugPrint('AppService logout error: $e');
+    }
+
+    // Clear local AppController state
     _isAuthenticated = false;
     _userEmail = null;
     _userName = null;
@@ -219,6 +228,11 @@ class AppController extends ChangeNotifier {
     final prefs = await SharedPreferences.getInstance();
     await prefs.setInt('completedSessions', _completedSessions);
     notifyListeners();
+  }
+
+  // Alias for incrementCompletedSessions to match requested API name
+  Future<void> incrementSessions() async {
+    await incrementCompletedSessions();
   }
 
   Future<void> addMeditationTime(int minutes) async {

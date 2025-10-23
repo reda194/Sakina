@@ -659,8 +659,12 @@ class _CreateGroupScreenState extends State<CreateGroupScreen> {
         return Icons.warning;
       case GroupType.selfCare:
         return Icons.spa;
-      case GroupType.general:
+      case GroupType.discussion:
         return Icons.forum;
+      case GroupType.crisis:
+        return Icons.emergency;
+      case GroupType.general:
+        return Icons.question_answer;
     }
   }
 
@@ -675,21 +679,25 @@ class _CreateGroupScreenState extends State<CreateGroupScreen> {
       case GroupType.anxiety:
         return AppTheme.warningColor;
       case GroupType.depression:
-        return Colors.blue;
+        return AppTheme.groupDepression;
       case GroupType.addiction:
-        return Colors.red;
+        return AppTheme.groupAddiction;
       case GroupType.relationships:
-        return Colors.pink;
+        return AppTheme.groupRelationships;
       case GroupType.parenting:
-        return Colors.green;
+        return AppTheme.groupParenting;
       case GroupType.grief:
-        return Colors.grey;
+        return AppTheme.groupGrief;
       case GroupType.trauma:
-        return Colors.purple;
+        return AppTheme.groupTrauma;
       case GroupType.stress:
-        return Colors.deepOrange;
+        return AppTheme.groupStress;
       case GroupType.selfCare:
-        return Colors.teal;
+        return AppTheme.groupSelfCare;
+      case GroupType.discussion:
+        return AppTheme.infoColor;
+      case GroupType.crisis:
+        return AppTheme.groupCrisis;
       case GroupType.general:
         return AppTheme.textSecondary;
     }
@@ -721,6 +729,10 @@ class _CreateGroupScreenState extends State<CreateGroupScreen> {
         return 'التوتر';
       case GroupType.selfCare:
         return 'العناية بالذات';
+      case GroupType.discussion:
+        return 'نقاش';
+      case GroupType.crisis:
+        return 'دعم طارئ';
       case GroupType.general:
         return 'عام';
     }

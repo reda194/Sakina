@@ -445,6 +445,8 @@ enum GroupType {
   support,
   therapy,
   meditation,
+  discussion,
+  crisis,
   anxiety,
   depression,
   stress,

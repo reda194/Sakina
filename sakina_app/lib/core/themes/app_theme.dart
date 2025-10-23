@@ -50,6 +50,17 @@ class AppTheme {
   static const Color moodHappy = Color(0xFFFACC15); // Warm yellow
   static const Color moodCalm = Color(0xFF38BDF8); // Soft blue
 
+  // Group Type Colors - Themed for different support groups
+  static const Color groupDepression = Color(0xFF2196F3); // Blue
+  static const Color groupAddiction = Color(0xFFF44336); // Red
+  static const Color groupRelationships = Color(0xFFE91E63); // Pink
+  static const Color groupParenting = Color(0xFF4CAF50); // Green
+  static const Color groupGrief = Color(0xFF9E9E9E); // Grey
+  static const Color groupTrauma = Color(0xFF9C27B0); // Purple
+  static const Color groupStress = Color(0xFFFF5722); // Deep Orange
+  static const Color groupSelfCare = Color(0xFF009688); // Teal
+  static const Color groupCrisis = Color(0xFFC62828); // Dark Red
+
   // Gradient Colors for Enhanced UI
   static const LinearGradient primaryGradient = LinearGradient(
     colors: [primaryColor, primaryLight],

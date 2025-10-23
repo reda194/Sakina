@@ -164,7 +164,7 @@ class _ExerciseDetailsScreenState extends State<ExerciseDetailsScreen>
                         ],
                       ),
                     );
-                  }).toList(),
+                  }),
                 ],
               ),
             ),
@@ -219,7 +219,7 @@ class _ExerciseDetailsScreenState extends State<ExerciseDetailsScreen>
                           ],
                         ),
                       );
-                    }).toList(),
+                    }),
                   ],
                 ),
               ),
@@ -575,7 +575,7 @@ class _ExerciseDetailsScreenState extends State<ExerciseDetailsScreen>
                   ],
                 ),
               );
-            }).toList(),
+            }),
           ],
         ),
       ),
@@ -588,7 +588,7 @@ class _ExerciseDetailsScreenState extends State<ExerciseDetailsScreen>
         padding: const EdgeInsets.all(16),
         decoration: BoxDecoration(
           color: AppTheme.successColor.withOpacity(0.1),
-          border: Border(
+          border: const Border(
             top: BorderSide(
               color: AppTheme.borderColor,
               width: 1,
@@ -616,7 +616,7 @@ class _ExerciseDetailsScreenState extends State<ExerciseDetailsScreen>
 
     return Container(
       padding: const EdgeInsets.all(16),
-      decoration: BoxDecoration(
+      decoration: const BoxDecoration(
         color: Colors.white,
         border: Border(
           top: BorderSide(

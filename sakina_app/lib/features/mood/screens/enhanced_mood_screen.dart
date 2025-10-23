@@ -608,7 +608,7 @@ class _EnhancedMoodScreenState extends State<EnhancedMoodScreen>
               SizedBox(height: ResponsiveUtils.getResponsiveSpacing(context, 16.0)),
               ...moodProvider.recentMoodEntries.take(5).map((entry) {
                 return _buildMoodHistoryItem(entry);
-              }).toList(),
+              }),
               if (moodProvider.recentMoodEntries.length > 5) ...[
                 SizedBox(height: ResponsiveUtils.getResponsiveSpacing(context, 8.0)),
                 Center(

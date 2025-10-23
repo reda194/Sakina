@@ -617,6 +617,10 @@ class _GroupsScreenState extends State<GroupsScreen>
         return Icons.psychology;
       case GroupType.meditation:
         return Icons.self_improvement;
+      case GroupType.discussion:
+        return Icons.forum;
+      case GroupType.crisis:
+        return Icons.warning_amber; // Safe fallback for all SDK versions
       case GroupType.anxiety:
         return Icons.sentiment_very_dissatisfied;
       case GroupType.depression:
@@ -648,6 +652,10 @@ class _GroupsScreenState extends State<GroupsScreen>
         return AppTheme.primaryColor;
       case GroupType.meditation:
         return AppTheme.successColor;
+      case GroupType.discussion:
+        return Colors.blue;
+      case GroupType.crisis:
+        return Colors.red;
       case GroupType.anxiety:
         return AppTheme.warningColor;
       case GroupType.depression:

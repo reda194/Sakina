@@ -3,7 +3,7 @@ import 'package:provider/provider.dart';
 import '../../../core/themes/app_theme.dart';
 import '../../../widgets/custom_text_field.dart';
 import '../../../widgets/loading_button.dart';
-import '../providers/auth_provider.dart';
+import '../../../services/app_service.dart';
 
 class ForgotPasswordScreen extends StatefulWidget {
   const ForgotPasswordScreen({super.key});
@@ -30,16 +30,46 @@ class _ForgotPasswordScreenState extends State<ForgotPasswordScreen> {
         _isLoading = true;
       });
 
-      final authProvider = Provider.of<AuthProvider>(context, listen: false);
+      final appService = Provider.of<AppService>(context, listen: false);
 
-      // Simulate API call
-      await authProvider.forgotPassword(_emailController.text.trim());
+      try {
+        // Call AppService resetPassword
+        final result = await appService.resetPassword(_emailController.text.trim());
 
-      if (mounted) {
-        setState(() {
-          _isLoading = false;
-          _emailSent = true;
-        });
+        if (mounted) {
+          setState(() {
+            _isLoading = false;
+          });
+
+          if (result.success) {
+            setState(() {
+              _emailSent = true;
+            });
+          } else {
+            // Show error message
+            ScaffoldMessenger.of(context).showSnackBar(
+              SnackBar(
+                content: Text(result.message),
+                backgroundColor: Colors.red,
+                behavior: SnackBarBehavior.floating,
+              ),
+            );
+          }
+        }
+      } catch (e) {
+        if (mounted) {
+          setState(() {
+            _isLoading = false;
+          });
+
+          ScaffoldMessenger.of(context).showSnackBar(
+            const SnackBar(
+              content: Text('حدث خطأ أثناء إرسال رابط إعادة التعيين'),
+              backgroundColor: Colors.red,
+              behavior: SnackBarBehavior.floating,
+            ),
+          );
+        }
       }
     }
   }

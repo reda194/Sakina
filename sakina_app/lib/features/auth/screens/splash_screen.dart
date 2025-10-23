@@ -2,6 +2,7 @@ import 'package:flutter/material.dart';
 import 'package:provider/provider.dart';
 import '../../../core/themes/app_theme.dart';
 import '../../../core/constants/app_constants.dart';
+import '../../../services/app_service.dart';
 import '../providers/auth_provider.dart';
 import 'login_screen.dart';
 import 'onboarding_screen.dart';

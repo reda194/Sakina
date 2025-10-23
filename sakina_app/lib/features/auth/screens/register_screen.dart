@@ -1,8 +1,8 @@
 import 'package:flutter/material.dart';
 import 'package:provider/provider.dart';
-import '../../../services/app_service.dart';
 import '../../../config/app_config.dart';
 import '../../../core/themes/app_theme.dart';
+import '../providers/auth_provider.dart';
 import '../widgets/auth_text_field.dart';
 import '../widgets/auth_button.dart';
 import '../../home/screens/home_screen.dart';
@@ -49,9 +49,9 @@ class _RegisterScreenState extends State<RegisterScreen> {
       return;
     }
 
-    final appService = Provider.of<AppService>(context, listen: false);
+    final authProvider = Provider.of<AuthProvider>(context, listen: false);
 
-    final result = await appService.register(
+    final success = await authProvider.signup(
       name: _nameController.text.trim(),
       email: _emailController.text.trim(),
       password: _passwordController.text,
@@ -59,11 +59,12 @@ class _RegisterScreenState extends State<RegisterScreen> {
 
     if (!mounted) return;
 
-    if (result.success) {
+    if (success) {
+      final user = authProvider.currentUser;
       // عرض رسالة نجاح
       ScaffoldMessenger.of(context).showSnackBar(
-        const SnackBar(
-          content: Text('تم إنشاء الحساب بنجاح! مرحباً بك في سكينة'),
+        SnackBar(
+          content: Text('تم إنشاء الحساب بنجاح! مرحباً ${user?.name ?? 'بك'} في سكينة'),
           backgroundColor: Colors.green,
           behavior: SnackBarBehavior.floating,
         ),
@@ -77,7 +78,7 @@ class _RegisterScreenState extends State<RegisterScreen> {
     } else {
       ScaffoldMessenger.of(context).showSnackBar(
         SnackBar(
-          content: Text(result.message),
+          content: Text(authProvider.errorMessage ?? 'حدث خطأ أثناء إنشاء الحساب'),
           backgroundColor: Colors.red,
           behavior: SnackBarBehavior.floating,
         ),
@@ -275,12 +276,12 @@ class _RegisterScreenState extends State<RegisterScreen> {
                 const SizedBox(height: 32),
 
                 // زر إنشاء الحساب
-                Consumer<AppService>(
-                  builder: (context, appService, child) {
+                Consumer<AuthProvider>(
+                  builder: (context, authProvider, child) {
                     return AuthButton(
                       text: 'إنشاء حساب',
-                      onPressed: appService.isLoading ? null : _handleRegister,
-                      isLoading: appService.isLoading,
+                      onPressed: authProvider.status == AuthStatus.loading ? null : _handleRegister,
+                      isLoading: authProvider.status == AuthStatus.loading,
                     );
                   },
                 ),

@@ -402,7 +402,7 @@ class _EnhancedHomeScreenState extends State<EnhancedHomeScreen>
               children: [
                 StatCard(
                   title: 'متوسط المزاج',
-                  value: '${moodProvider.averageMood.toStringAsFixed(1)}',
+                  value: moodProvider.averageMood.toStringAsFixed(1),
                   icon: Icons.trending_up,
                   color: AppTheme.primaryColor,
                   trend: '+0.5',

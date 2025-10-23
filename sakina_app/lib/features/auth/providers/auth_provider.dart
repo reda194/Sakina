@@ -1,11 +1,13 @@
 import 'package:flutter/material.dart';
 import '../../../services/storage_service.dart';
+import '../../../services/app_service.dart';
 import '../../../models/user_model.dart';
 
 enum AuthStatus { initial, loading, authenticated, unauthenticated, error }
 
 class AuthProvider extends ChangeNotifier {
   final StorageService _storageService;
+  final AppService _appService = AppService.instance;
 
   AuthStatus _status = AuthStatus.initial;
   UserModel? _currentUser;
@@ -27,19 +29,23 @@ class AuthProvider extends ChangeNotifier {
     notifyListeners();
 
     try {
-      final token = await _storageService.getUserToken();
-      final userId = _storageService.getUserId();
+      // Ensure AppService is initialized before checking auth status
+      if (!_appService.isInitialized) {
+        await _appService.initialize(_storageService);
+      }
 
-      if (token != null && userId != null) {
-        // TODO: Validate token with backend
-        // For now, we'll create a mock user
-        _currentUser = UserModel(
-          id: userId,
-          email: _storageService.getUserEmail() ?? '',
-          name: 'مستخدم سكينة',
-          createdAt: DateTime.now(),
-        );
-        _status = AuthStatus.authenticated;
+      final token = await _storageService.getUserToken();
+
+      if (token != null) {
+        // Try to get current user from AppService
+        final user = _appService.currentUser;
+        if (user != null) {
+          _currentUser = user;
+          _status = AuthStatus.authenticated;
+        } else {
+          // Token exists but no user - session expired
+          _status = AuthStatus.unauthenticated;
+        }
       } else {
         _status = AuthStatus.unauthenticated;
       }
@@ -61,29 +67,20 @@ class AuthProvider extends ChangeNotifier {
     notifyListeners();
 
     try {
-      // TODO: Implement actual login API call
-      // Simulating API call
-      await Future.delayed(const Duration(seconds: 2));
+      // Call AppService login
+      final result = await _appService.login(email, password);
 
-      // Mock successful login
-      const mockToken = 'mock_auth_token_123';
-      const mockUserId = 'user_123';
-
-      await _storageService.saveUserToken(mockToken);
-      await _storageService.saveUserId(mockUserId);
-      await _storageService.saveUserEmail(email);
-      await _storageService.setLoggedIn(true);
-
-      _currentUser = UserModel(
-        id: mockUserId,
-        email: email,
-        name: 'مستخدم سكينة',
-        createdAt: DateTime.now(),
-      );
-
-      _status = AuthStatus.authenticated;
-      notifyListeners();
-      return true;
+      if (result.success && result.user != null) {
+        _currentUser = result.user;
+        _status = AuthStatus.authenticated;
+        notifyListeners();
+        return true;
+      } else {
+        _errorMessage = result.message;
+        _status = AuthStatus.error;
+        notifyListeners();
+        return false;
+      }
     } catch (e) {
       _status = AuthStatus.error;
       _errorMessage = 'فشل تسجيل الدخول. يرجى المحاولة مرة أخرى.';
@@ -104,7 +101,7 @@ class AuthProvider extends ChangeNotifier {
     notifyListeners();
 
     try {
-      // TODO: Implement Google Sign In
+      // TODO: Implement Google Sign In using AppService when available
       await Future.delayed(const Duration(seconds: 2));
 
       // Mock successful Google login
@@ -141,7 +138,7 @@ class AuthProvider extends ChangeNotifier {
     notifyListeners();
 
     try {
-      // TODO: Implement Facebook Sign In
+      // TODO: Implement Facebook Sign In using AppService when available
       await Future.delayed(const Duration(seconds: 2));
 
       // Mock successful Facebook login
@@ -181,29 +178,24 @@ class AuthProvider extends ChangeNotifier {
     notifyListeners();
 
     try {
-      // TODO: Implement actual signup API call
-      // Simulating API call
-      await Future.delayed(const Duration(seconds: 2));
-
-      // Mock successful signup
-      const mockToken = 'mock_auth_token_456';
-      const mockUserId = 'user_456';
-
-      await _storageService.saveUserToken(mockToken);
-      await _storageService.saveUserId(mockUserId);
-      await _storageService.saveUserEmail(email);
-      await _storageService.setLoggedIn(true);
-
-      _currentUser = UserModel(
-        id: mockUserId,
-        email: email,
+      // Call AppService register
+      final result = await _appService.register(
         name: name,
-        createdAt: DateTime.now(),
+        email: email,
+        password: password,
       );
 
-      _status = AuthStatus.authenticated;
-      notifyListeners();
-      return true;
+      if (result.success && result.user != null) {
+        _currentUser = result.user;
+        _status = AuthStatus.authenticated;
+        notifyListeners();
+        return true;
+      } else {
+        _errorMessage = result.message;
+        _status = AuthStatus.error;
+        notifyListeners();
+        return false;
+      }
     } catch (e) {
       _status = AuthStatus.error;
       _errorMessage = 'فشل إنشاء الحساب. يرجى المحاولة مرة أخرى.';
@@ -217,7 +209,10 @@ class AuthProvider extends ChangeNotifier {
     notifyListeners();
 
     try {
-      await _storageService.clearUserData();
+      // Call AppService logout
+      await _appService.logout();
+
+      // Clear local state
       _currentUser = null;
       _status = AuthStatus.unauthenticated;
     } catch (e) {

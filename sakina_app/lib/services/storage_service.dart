@@ -230,7 +230,19 @@ class StorageService {
       if (jsonString == null) return [];
 
       final jsonList = jsonDecode(jsonString) as List<dynamic>;
-      return jsonList.map((item) => item as Map<String, dynamic>).toList();
+
+      // Iterate and check each item is a Map before casting, skip malformed items
+      final result = <Map<String, dynamic>>[];
+      for (final item in jsonList) {
+        if (item is Map<String, dynamic>) {
+          result.add(item);
+        } else if (item is Map) {
+          // Handle Map with non-String keys by converting
+          result.add(Map<String, dynamic>.from(item));
+        }
+        // Skip items that are not Maps (malformed data)
+      }
+      return result;
     } catch (e) {
       print('Error loading list for key $key: $e');
       return [];

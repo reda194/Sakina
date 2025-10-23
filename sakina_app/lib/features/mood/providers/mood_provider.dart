@@ -103,6 +103,12 @@ class MoodProvider extends ChangeNotifier {
     try {
       final entries = await _storageService.getMoodEntries();
       _moodEntries = entries;
+
+      // Initialize currentMood to the most recent entry if available
+      if (_moodEntries.isNotEmpty) {
+        _currentMood = _moodEntries.last.mood.numericValue;
+      }
+
       _isLoading = false;
       notifyListeners();
     } catch (e) {
@@ -133,10 +139,13 @@ class MoodProvider extends ChangeNotifier {
   // Update current mood
   Future<void> updateMood(int mood) async {
     try {
+      // Clamp mood value to valid range (1-5) to avoid invalid enum conversion
+      final clampedMood = mood.clamp(1, 5);
+
       final entry = MoodEntry(
         id: DateTime.now().millisecondsSinceEpoch.toString(),
         userId: 'current_user', // Should get from auth provider
-        mood: MoodType.fromNumeric(mood),
+        mood: MoodType.fromNumeric(clampedMood),
         timestamp: DateTime.now(),
       );
 

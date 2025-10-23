@@ -1,12 +1,14 @@
-import 'package:flutter/foundation.dart';
+import 'package:flutter/material.dart';
 import 'package:shared_preferences/shared_preferences.dart';
 import 'dart:convert';
 import '../../../models/mood_entry.dart';
 import '../../../core/services/ai_service.dart';
+import '../../../core/services/notification_service.dart';
 
 class AdvancedMoodProvider with ChangeNotifier {
   final List<MoodEntry> _moodEntries = [];
   final AiService _aiService = AiService.instance;
+  final NotificationService _notificationService = NotificationService.instance;
   
   bool _isLoading = false;
   String? _error;
@@ -402,13 +404,13 @@ class AdvancedMoodProvider with ChangeNotifier {
   Future<void> updateDailyReminders(bool enabled) async {
     _dailyReminders = enabled;
     await _saveData();
-    
+
     if (enabled) {
       _scheduleNotifications();
     } else {
-      // await _notificationService.cancelAllNotifications();
+      await _notificationService.cancelAllNotifications();
     }
-    
+
     notifyListeners();
   }
 
@@ -438,15 +440,15 @@ class AdvancedMoodProvider with ChangeNotifier {
   // Schedule notifications
   Future<void> _scheduleNotifications() async {
     if (!_dailyReminders) return;
-    
+
     try {
-      // await _notificationService.scheduleDailyNotification(
-      //   id: 1,
-      //   title: 'تذكير تسجيل المزاج',
-      //   body: 'كيف كان مزاجك اليوم؟ سجل مشاعرك الآن',
-      //   hour: _reminderTime.hour,
-      //   minute: _reminderTime.minute,
-      // );
+      await _notificationService.scheduleDailyNotification(
+        id: 1,
+        title: 'تذكير تسجيل المزاج',
+        body: 'كيف كان مزاجك اليوم؟ سجل مشاعرك الآن',
+        hour: _reminderTime.hour,
+        minute: _reminderTime.minute,
+      );
     } catch (e) {
       debugPrint('Error scheduling notifications: $e');
     }
@@ -597,12 +599,3 @@ class AdvancedMoodProvider with ChangeNotifier {
   }
 }
 
-class TimeOfDay {
-  final int hour;
-  final int minute;
-  
-  const TimeOfDay({required this.hour, required this.minute});
-  
-  @override
-  String toString() => '${hour.toString().padLeft(2, '0')}:${minute.toString().padLeft(2, '0')}';
-}

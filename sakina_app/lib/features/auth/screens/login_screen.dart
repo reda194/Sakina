@@ -1,10 +1,10 @@
 import 'package:flutter/material.dart';
 import 'package:provider/provider.dart';
-import '../../../services/app_service.dart';
 import '../../../config/app_config.dart';
 import '../../../core/themes/app_theme.dart';
 import '../../../widgets/custom_text_field.dart';
 import '../../../widgets/loading_button.dart';
+import '../providers/auth_provider.dart';
 import 'signup_screen.dart';
 import 'forgot_password_screen.dart';
 import '../../home/screens/home_screen.dart';
@@ -35,16 +35,27 @@ class _LoginScreenState extends State<LoginScreen> {
       return;
     }
 
-    final appService = Provider.of<AppService>(context, listen: false);
-    
-    final result = await appService.login(
-      _emailController.text.trim(),
-      _passwordController.text,
+    final authProvider = Provider.of<AuthProvider>(context, listen: false);
+
+    final success = await authProvider.login(
+      email: _emailController.text.trim(),
+      password: _passwordController.text,
+      rememberMe: _rememberMe,
     );
 
     if (!mounted) return;
 
-    if (result.success) {
+    if (success) {
+      final user = authProvider.currentUser;
+      // عرض رسالة ترحيب
+      ScaffoldMessenger.of(context).showSnackBar(
+        SnackBar(
+          content: Text('مرحباً ${user?.name ?? 'بك'}'),
+          backgroundColor: Colors.green,
+          behavior: SnackBarBehavior.floating,
+        ),
+      );
+
       // الانتقال إلى الشاشة الرئيسية
       Navigator.pushReplacement(
         context,
@@ -54,7 +65,7 @@ class _LoginScreenState extends State<LoginScreen> {
       // عرض رسالة الخطأ
       ScaffoldMessenger.of(context).showSnackBar(
         SnackBar(
-          content: Text(result.message),
+          content: Text(authProvider.errorMessage ?? 'حدث خطأ أثناء تسجيل الدخول'),
           backgroundColor: Colors.red,
           behavior: SnackBarBehavior.floating,
         ),
@@ -190,12 +201,12 @@ class _LoginScreenState extends State<LoginScreen> {
                   ],
                 ),
                 const SizedBox(height: 30),
-                Consumer<AppService>(
-                  builder: (context, appService, child) {
+                Consumer<AuthProvider>(
+                  builder: (context, authProvider, child) {
                     return LoadingButton(
                       text: 'تسجيل الدخول',
-                      onPressed: appService.isLoading ? null : _handleLogin,
-                      isLoading: appService.isLoading,
+                      onPressed: authProvider.status == AuthStatus.loading ? null : _handleLogin,
+                      isLoading: authProvider.status == AuthStatus.loading,
                     );
                   },
                 ),

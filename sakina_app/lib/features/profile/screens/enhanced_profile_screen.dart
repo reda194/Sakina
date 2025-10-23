@@ -1,9 +1,11 @@
 import 'package:flutter/material.dart';
-import 'package:flutter/services.dart';
+import 'package:provider/provider.dart';
 import '../../../core/themes/app_theme.dart';
 import '../../../core/utils/responsive_utils.dart';
 import '../../../widgets/responsive_widget.dart';
 import '../../../widgets/mental_health_widgets.dart';
+import '../../auth/providers/auth_provider.dart';
+import '../../auth/screens/login_screen.dart';
 
 class EnhancedProfileScreen extends StatefulWidget {
   const EnhancedProfileScreen({super.key});
@@ -605,9 +607,33 @@ class _EnhancedProfileScreenState extends State<EnhancedProfileScreen>
             child: const Text('إلغاء'),
           ),
           TextButton(
-            onPressed: () {
+            onPressed: () async {
               Navigator.of(context).pop();
-              // Add logout logic here
+
+              // Show loading indicator
+              showDialog(
+                context: context,
+                barrierDismissible: false,
+                builder: (context) => const Center(
+                  child: CircularProgressIndicator(),
+                ),
+              );
+
+              // Perform logout
+              final authProvider = Provider.of<AuthProvider>(context, listen: false);
+              await authProvider.logout();
+
+              if (!mounted) return;
+
+              // Close loading indicator
+              Navigator.of(context).pop();
+
+              // Navigate to login screen
+              Navigator.pushAndRemoveUntil(
+                context,
+                MaterialPageRoute(builder: (context) => const LoginScreen()),
+                (route) => false,
+              );
             },
             child: const Text(
               'تسجيل الخروج',
